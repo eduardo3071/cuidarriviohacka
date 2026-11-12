@@ -1,0 +1,4 @@
+-r requirements.txt
+# so para scripts/make_test_exams.py (gera exames sinteticos de teste)
+fpdf2>=2.8
+pillow>=10

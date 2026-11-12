@@ -1,0 +1,41 @@
+{
+  "_aviso": "DADOS 100% SINTETICOS. Personagem ficticia criada para o hackathon. Revisao clinica pendente (enfermeiro do time).",
+  "patient": {
+    "id": "a1000000-0000-4000-8000-000000000001",
+    "full_name": "Marta Albuquerque Lima",
+    "birth_date": "1968-03-14",
+    "sex": "F"
+  },
+  "doctor": {
+    "id": "d1000000-0000-4000-8000-000000000001",
+    "full_name": "Dr. Henrique Tavares",
+    "crm": "CRM-SP 000000 (ficticio)"
+  },
+  "encounters": [
+    {"occurred_at": "2016-05-12", "specialty": "Clinica geral", "provider": "Clinica Aurora", "notes": "Check-up anual. Sem queixas."},
+    {"occurred_at": "2018-06-18", "specialty": "Clinica geral", "provider": "Clinica Aurora", "notes": "Retorno com exames. Orientada sobre alimentacao e atividade fisica."},
+    {"occurred_at": "2019-08-23", "specialty": "Clinica geral", "provider": "Lakeside Medical Centre (exterior)", "notes": "Consulta durante viagem de trabalho. Exames de rotina."},
+    {"occurred_at": "2021-09-06", "specialty": "Clinica geral", "provider": "Diagnosticos Vita", "notes": "Retorno com exames. Pressao arterial limítrofe."},
+    {"occurred_at": "2022-02-10", "specialty": "Cardiologia", "provider": "Instituto do Coracao Vita", "notes": "Iniciado anti-hipertensivo."},
+    {"occurred_at": "2023-10-20", "specialty": "Clinica geral", "provider": "Clinica Aurora", "notes": "Retorno com exames. Suplementacao de vitamina D."},
+    {"occurred_at": "2025-03-28", "specialty": "Cardiologia", "provider": "Instituto do Coracao Vita", "notes": "Relata palpitacoes ocasionais, principalmente a noite."}
+  ],
+  "medications": [
+    {"name": "Losartana", "dose": "50 mg 1x/dia", "started_at": "2022-02-10", "ended_at": null},
+    {"name": "Vitamina D3", "dose": "2000 UI 1x/dia", "started_at": "2023-10-20", "ended_at": null}
+  ],
+  "vaccinations": [
+    {"name": "Hepatite B", "dose_number": 1, "administered_at": "2016-06-01"},
+    {"name": "Hepatite B", "dose_number": 2, "administered_at": "2016-07-01"},
+    {"name": "Hepatite B", "dose_number": 3, "administered_at": "2016-12-01"},
+    {"name": "dTpa", "dose_number": 1, "administered_at": "2019-09-10"},
+    {"name": "COVID-19", "dose_number": 1, "administered_at": "2021-07-14"},
+    {"name": "COVID-19", "dose_number": 2, "administered_at": "2021-10-06"},
+    {"name": "COVID-19", "dose_number": 3, "administered_at": "2022-04-20"},
+    {"name": "Influenza", "dose_number": 1, "administered_at": "2023-04-25"},
+    {"name": "Influenza", "dose_number": 1, "administered_at": "2024-04-23"},
+    {"name": "Influenza", "dose_number": 1, "administered_at": "2025-04-22"},
+    {"name": "Herpes-zoster", "dose_number": 1, "administered_at": "2025-06-10"},
+    {"name": "Herpes-zoster", "dose_number": 2, "administered_at": "2025-09-12"}
+  ]
+}

@@ -1,0 +1,76 @@
+collected_at,lab_name,raw_name,value,unit,ref_low,ref_high,ref_text
+2016-05-10,Laboratorio Aurora,Glicose em jejum,91,mg/dL,70,99,70 - 99
+2016-05-10,Laboratorio Aurora,Hemoglobina glicada (HbA1c),5.3,%,4.0,5.6,"4,0 - 5,6"
+2016-05-10,Laboratorio Aurora,Colesterol total,196,mg/dL,,200,< 200
+2016-05-10,Laboratorio Aurora,Colesterol LDL,118,mg/dL,,130,< 130
+2016-05-10,Laboratorio Aurora,Colesterol HDL,58,mg/dL,50,,> 50
+2016-05-10,Laboratorio Aurora,Triglicerídeos,110,mg/dL,,150,< 150
+2016-05-10,Laboratorio Aurora,Creatinina,0.78,mg/dL,0.5,1.0,"0,50 - 1,00"
+2016-05-10,Laboratorio Aurora,TSH,2.1,µUI/mL,0.4,4.0,"0,40 - 4,00"
+2016-05-10,Laboratorio Aurora,Hemoglobina,13.4,g/dL,12.0,15.5,"12,0 - 15,5"
+2016-05-10,Laboratorio Aurora,Vitamina D (25-OH),34,ng/mL,30,100,30 - 100
+2016-05-10,Laboratorio Aurora,TGP (ALT),22,U/L,7,33,7 - 33
+2018-06-14,Laboratorio Aurora,Glicose em jejum,95,mg/dL,70,99,70 - 99
+2018-06-14,Laboratorio Aurora,Hemoglobina glicada (HbA1c),5.4,%,4.0,5.6,"4,0 - 5,6"
+2018-06-14,Laboratorio Aurora,Colesterol total,205,mg/dL,,200,< 200
+2018-06-14,Laboratorio Aurora,Colesterol LDL,124,mg/dL,,130,< 130
+2018-06-14,Laboratorio Aurora,Colesterol HDL,56,mg/dL,50,,> 50
+2018-06-14,Laboratorio Aurora,Triglicerídeos,128,mg/dL,,150,< 150
+2018-06-14,Laboratorio Aurora,Creatinina,0.8,mg/dL,0.5,1.0,"0,50 - 1,00"
+2018-06-14,Laboratorio Aurora,TSH,2.6,µUI/mL,0.4,4.0,"0,40 - 4,00"
+2018-06-14,Laboratorio Aurora,Hemoglobina,13.2,g/dL,12.0,15.5,"12,0 - 15,5"
+2019-08-21,Lakeside Medical Centre,Fasting Glucose,5.5,mmol/L,3.9,5.5,3.9 - 5.5
+2019-08-21,Lakeside Medical Centre,Hemoglobin A1c,39,mmol/mol,20,42,20 - 42
+2019-08-21,Lakeside Medical Centre,Total Cholesterol,5.4,mmol/L,,5.2,< 5.2
+2019-08-21,Lakeside Medical Centre,LDL-C,3.4,mmol/L,,3.5,< 3.5
+2019-08-21,Lakeside Medical Centre,HDL-C,1.4,mmol/L,1.3,,> 1.3
+2019-08-21,Lakeside Medical Centre,Triglycerides,1.6,mmol/L,,1.7,< 1.7
+2019-08-21,Lakeside Medical Centre,Creatinine,72,µmol/L,45,90,45 - 90
+2019-08-21,Lakeside Medical Centre,TSH,3.1,mIU/L,0.35,4.94,0.35 - 4.94
+2019-08-21,Lakeside Medical Centre,Hemoglobin,130,g/L,120,155,120 - 155
+2019-08-21,Lakeside Medical Centre,25-OH Vitamin D,62,nmol/L,50,125,50 - 125
+2019-08-21,Lakeside Medical Centre,ALT,26,U/L,10,35,10 - 35
+2021-09-02,Diagnosticos Vita,Glicemia de jejum,101,mg/dL,70,110,70 - 110
+2021-09-02,Diagnosticos Vita,HbA1c,5.8,%,4.0,5.7,"4,0 - 5,7"
+2021-09-02,Diagnosticos Vita,Colesterol Total,218,mg/dL,,190,< 190
+2021-09-02,Diagnosticos Vita,LDL,132,mg/dL,,100,< 100
+2021-09-02,Diagnosticos Vita,HDL,54,mg/dL,50,,> 50
+2021-09-02,Diagnosticos Vita,Triglicérides,150,mg/dL,,150,< 150
+2021-09-02,Diagnosticos Vita,Creatinina sérica,0.84,mg/dL,0.6,1.1,"0,60 - 1,10"
+2021-09-02,Diagnosticos Vita,TSH ultrassensível,3.8,mUI/L,0.45,4.5,"0,45 - 4,50"
+2021-09-02,Diagnosticos Vita,Hemoglobina (Hb),12.9,g/dL,11.7,15.5,"11,7 - 15,5"
+2021-09-02,Diagnosticos Vita,25-Hidroxivitamina D,26,ng/mL,20,60,20 - 60
+2021-09-02,Diagnosticos Vita,ALT/TGP,28,U/L,7,31,7 - 31
+2023-10-17,Laboratorio Aurora,Glicose em jejum,106,mg/dL,70,99,70 - 99
+2023-10-17,Laboratorio Aurora,Hemoglobina glicada (HbA1c),5.9,%,4.0,5.6,"4,0 - 5,6"
+2023-10-17,Laboratorio Aurora,Colesterol total,224,mg/dL,,200,< 200
+2023-10-17,Laboratorio Aurora,Colesterol LDL,138,mg/dL,,130,< 130
+2023-10-17,Laboratorio Aurora,Colesterol HDL,52,mg/dL,50,,> 50
+2023-10-17,Laboratorio Aurora,Triglicerídeos,162,mg/dL,,150,< 150
+2023-10-17,Laboratorio Aurora,Creatinina,0.88,mg/dL,0.5,1.0,"0,50 - 1,00"
+2023-10-17,Laboratorio Aurora,TSH,4.2,µUI/mL,0.4,4.0,"0,40 - 4,00"
+2023-10-17,Laboratorio Aurora,Hemoglobina,12.6,g/dL,12.0,15.5,"12,0 - 15,5"
+2023-10-17,Laboratorio Aurora,Vitamina D (25-OH),24,ng/mL,30,100,30 - 100
+2023-10-17,Laboratorio Aurora,TGP (ALT),32,U/L,7,33,7 - 33
+2025-03-25,Diagnosticos Vita,Glicemia de jejum,111,mg/dL,70,110,70 - 110
+2025-03-25,Diagnosticos Vita,HbA1c,6.0,%,4.0,5.7,"4,0 - 5,7"
+2025-03-25,Diagnosticos Vita,Colesterol Total,229,mg/dL,,190,< 190
+2025-03-25,Diagnosticos Vita,LDL,141,mg/dL,,100,< 100
+2025-03-25,Diagnosticos Vita,HDL,50,mg/dL,50,,> 50
+2025-03-25,Diagnosticos Vita,Triglicérides,171,mg/dL,,150,< 150
+2025-03-25,Diagnosticos Vita,Creatinina sérica,0.92,mg/dL,0.6,1.1,"0,60 - 1,10"
+2025-03-25,Diagnosticos Vita,TSH ultrassensível,4.2,mUI/L,0.45,4.5,"0,45 - 4,50"
+2025-03-25,Diagnosticos Vita,Hemoglobina (Hb),12.3,g/dL,11.7,15.5,"11,7 - 15,5"
+2025-03-25,Diagnosticos Vita,25-Hidroxivitamina D,22,ng/mL,20,60,20 - 60
+2025-03-25,Diagnosticos Vita,ALT/TGP,35,U/L,7,31,7 - 31
+2026-09-28,Diagnosticos Vita,Glicemia de jejum,118,mg/dL,70,110,70 - 110
+2026-09-28,Diagnosticos Vita,HbA1c,6.2,%,4.0,5.7,"4,0 - 5,7"
+2026-09-28,Diagnosticos Vita,Colesterol Total,236,mg/dL,,190,< 190
+2026-09-28,Diagnosticos Vita,LDL,146,mg/dL,,100,< 100
+2026-09-28,Diagnosticos Vita,HDL,49,mg/dL,50,,> 50
+2026-09-28,Diagnosticos Vita,Triglicérides,182,mg/dL,,150,< 150
+2026-09-28,Diagnosticos Vita,Creatinina sérica,0.97,mg/dL,0.6,1.1,"0,60 - 1,10"
+2026-09-28,Diagnosticos Vita,TSH ultrassensível,4.4,mUI/L,0.45,4.5,"0,45 - 4,50"
+2026-09-28,Diagnosticos Vita,Hemoglobina (Hb),12.1,g/dL,11.7,15.5,"11,7 - 15,5"
+2026-09-28,Diagnosticos Vita,25-Hidroxivitamina D,21,ng/mL,20,60,20 - 60
+2026-09-28,Diagnosticos Vita,ALT/TGP,38,U/L,7,31,7 - 31

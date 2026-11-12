@@ -1,0 +1,25 @@
+canonical_name,category,unit_canonical,aliases
+Glicemia de jejum,Metabolismo,mg/dL,glicose|glicose em jejum|glicemia|glicemia jejum|fasting glucose|glucose
+Hemoglobina glicada (HbA1c),Metabolismo,%,hba1c|hemoglobina glicada|hemoglobin a1c|a1c
+Colesterol total,Lipidios,mg/dL,colesterol|total cholesterol
+Colesterol LDL,Lipidios,mg/dL,ldl|ldl c|ldl colesterol
+Colesterol HDL,Lipidios,mg/dL,hdl|hdl c|hdl colesterol
+Triglicerídeos,Lipidios,mg/dL,triglicerides|triglycerides|triglicerideos|tg
+Creatinina,Funcao renal,mg/dL,creatinina serica|creatinine|creat
+Ureia,Funcao renal,mg/dL,urea|ureia serica
+TSH,Tireoide,mIU/L,tsh ultrassensivel|tsh us|hormonio tireoestimulante|thyroid stimulating hormone
+T4 livre,Tireoide,ng/dL,t4l|free t4|tiroxina livre
+Hemoglobina,Hemograma,g/dL,hb|hgb|hemoglobin|hemoglobina hb
+Hematócrito,Hemograma,%,ht|hct|hematocrit
+Leucócitos,Hemograma,/mm³,leucocitos totais|wbc|white blood cells
+Plaquetas,Hemograma,/mm³,plt|platelets|plaquetas totais
+Ferritina,Ferro,ng/mL,ferritin
+Vitamina D (25-OH),Vitaminas,ng/mL,25 oh vitamin d|25 hidroxivitamina d|vitamina d|vitamin d|25 hydroxyvitamin d|25 oh vitamina d
+Vitamina B12,Vitaminas,pg/mL,cobalamina|b12|vitamin b12
+Ácido úrico,Metabolismo,mg/dL,acido urico|uric acid
+PCR ultrassensível,Inflamacao,mg/L,pcr us|proteina c reativa ultrassensivel|hs crp|crp
+TGP (ALT),Figado,U/L,tgp|alt|alanina aminotransferase|alt tgp|alanine aminotransferase
+TGO (AST),Figado,U/L,tgo|ast|aspartato aminotransferase|ast tgo|aspartate aminotransferase
+Sódio,Eletrolitos,mEq/L,na|sodium
+Potássio,Eletrolitos,mEq/L,k|potassium
+Cálcio,Eletrolitos,mg/dL,ca|calcium|calcio total

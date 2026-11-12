@@ -1,0 +1,18 @@
+canonical_name,from_unit,to_unit,factor,offset
+Glicemia de jejum,mmol/L,mg/dL,18.016,0
+Hemoglobina glicada (HbA1c),mmol/mol,%,0.0915,2.15
+Colesterol total,mmol/L,mg/dL,38.67,0
+Colesterol LDL,mmol/L,mg/dL,38.67,0
+Colesterol HDL,mmol/L,mg/dL,38.67,0
+Triglicerídeos,mmol/L,mg/dL,88.57,0
+Creatinina,µmol/L,mg/dL,0.011312,0
+Ureia,mmol/L,mg/dL,6.006,0
+TSH,µUI/mL,mIU/L,1,0
+TSH,mUI/L,mIU/L,1,0
+TSH,uIU/mL,mIU/L,1,0
+Hemoglobina,g/L,g/dL,0.1,0
+Vitamina D (25-OH),nmol/L,ng/mL,0.4006,0
+Ferritina,µg/L,ng/mL,1,0
+PCR ultrassensível,mg/dL,mg/L,10,0
+Ácido úrico,µmol/L,mg/dL,0.01681,0
+Cálcio,mmol/L,mg/dL,4.008,0

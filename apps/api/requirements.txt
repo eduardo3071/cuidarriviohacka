@@ -1,0 +1,16 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic-settings>=2.4
+sqlalchemy>=2.0
+psycopg[binary]>=3.2
+httpx>=0.27
+pyjwt[crypto]>=2.9
+python-multipart>=0.0.9
+pdfplumber>=0.11
+pymupdf>=1.24
+anthropic>=1.0
+# visao computacional local (sem PyTorch): pre-processamento + OCR com caixas por palavra
+opencv-python-headless>=4.9
+rapidocr>=3.0
+onnxruntime>=1.18
+pytest>=8.0

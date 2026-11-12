@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "file": "vita_2026.pdf",
+    "lab": "Diagnosticos Vita",
+    "collected_at": "2026-09-28",
+    "kind": "pdf_text"
+  },
+  "observations": [
+    {
+      "raw_name": "Glicemia de jejum",
+      "value": 118.0,
+      "unit": "mg/dL",
+      "ref_low": 70.0,
+      "ref_high": 110.0,
+      "ref_text": "70 - 110"
+    },
+    {
+      "raw_name": "HbA1c",
+      "value": 6.2,
+      "unit": "%",
+      "ref_low": 4.0,
+      "ref_high": 5.7,
+      "ref_text": "4,0 - 5,7"
+    },
+    {
+      "raw_name": "Colesterol Total",
+      "value": 236.0,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 190.0,
+      "ref_text": "< 190"
+    },
+    {
+      "raw_name": "LDL",
+      "value": 146.0,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 100.0,
+      "ref_text": "< 100"
+    },
+    {
+      "raw_name": "HDL",
+      "value": 49.0,
+      "unit": "mg/dL",
+      "ref_low": 50.0,
+      "ref_high": null,
+      "ref_text": "> 50"
+    },
+    {
+      "raw_name": "Triglicérides",
+      "value": 182.0,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 150.0,
+      "ref_text": "< 150"
+    },
+    {
+      "raw_name": "Creatinina sérica",
+      "value": 0.97,
+      "unit": "mg/dL",
+      "ref_low": 0.6,
+      "ref_high": 1.1,
+      "ref_text": "0,60 - 1,10"
+    },
+    {
+      "raw_name": "TSH ultrassensível",
+      "value": 4.4,
+      "unit": "mUI/L",
+      "ref_low": 0.45,
+      "ref_high": 4.5,
+      "ref_text": "0,45 - 4,50"
+    },
+    {
+      "raw_name": "Hemoglobina (Hb)",
+      "value": 12.1,
+      "unit": "g/dL",
+      "ref_low": 11.7,
+      "ref_high": 15.5,
+      "ref_text": "11,7 - 15,5"
+    },
+    {
+      "raw_name": "25-Hidroxivitamina D",
+      "value": 21.0,
+      "unit": "ng/mL",
+      "ref_low": 20.0,
+      "ref_high": 60.0,
+      "ref_text": "20 - 60"
+    },
+    {
+      "raw_name": "ALT/TGP",
+      "value": 38.0,
+      "unit": "U/L",
+      "ref_low": 7.0,
+      "ref_high": 31.0,
+      "ref_text": "7 - 31"
+    }
+  ]
+}
