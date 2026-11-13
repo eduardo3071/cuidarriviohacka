@@ -1,5 +1,5 @@
 [run]
-install = "cd apps/web && npm install"
-dev = "cd apps/web && npm install --no-audit --no-fund && npx vite --host 0.0.0.0 --port 8080 --strictPort"
-build = "cd apps/web && npm install --no-audit --no-fund && npx vite build"
-"build:dev" = "cd apps/web && npm install --no-audit --no-fund && npx tsc --noEmit && npx vite build --mode development"
+install = "bash .lovable/run.sh install"
+dev = "bash .lovable/run.sh dev"
+build = "bash .lovable/run.sh build"
+"build:dev" = "bash .lovable/run.sh build:dev"
