@@ -21,11 +21,27 @@ Vercel (React+Vite) ──supabase-js──► Supabase (Postgres + Auth + Stora
 
 ```
 apps/api/            FastAPI (Dockerfile para o Render)
-apps/web/            React + Vite (a criar)
+apps/web/            React + Vite (login, exames, alertas, privacidade, visão do médico)
+docs/                roteiro da demonstração
+scripts/dev.py       sobe tudo local; scripts/preflight.py confere antes
 supabase/migrations/ schema + RLS (SQL versionado)
 data/ontology/       biomarcadores, aliases, unidades
 data/synthetic/      exames sintéticos + gabarito
 ```
+
+## Rodando TUDO local (Fase 7)
+
+Não precisa de Render nem de Vercel. O banco, o login e os arquivos continuam no Supabase (nuvem); o resto roda na sua máquina.
+
+```bash
+python scripts/dev.py               # pré-voo + API (http://localhost:8000/docs) + front (http://localhost:5173)
+python scripts/dev.py --offline     # SEM internet: só o front, direto no modo demonstração (dados do próprio app)
+python scripts/dev.py --no-api      # só o front (login e dados vão direto ao Supabase)
+python scripts/preflight.py         # só o pré-voo: o que funciona e o que cai no plano B (precisa do venv da API)
+```
+
+Ctrl+C derruba tudo; logs em `.dev-logs/`. O roteiro de 10 minutos, o que não prometer e o que fazer se algo falhar
+estão em [`docs/ROTEIRO_DEMO.md`](docs/ROTEIRO_DEMO.md).
 
 ## Rodando a API
 
@@ -130,12 +146,17 @@ vê é o **RLS**, não o código do front. O papel (paciente/médico) só escolh
   categorias (exames, histórico, relógio e alertas) e o prazo (7 dias a 1 ano), revoga na hora e vê quem abriu o quê.
 - **Médico**: lista só os pacientes com consentimento ativo; abre em **somente leitura**, vendo só as categorias liberadas.
   Cada abertura é gravada no `access_log` **antes** de mostrar os dados (se não der para registrar, não mostra).
+- **Enviar laudo** (só com `VITE_API_URL` e a API no ar): upload de PDF/foto → leitura em segundo plano → tela de **conferência** (cada
+  valor editável, com a imagem do laudo e uma caixa marcando onde foi lido; resultados de baixa confiança vêm destacados) → *Guardar*.
+  O front valida antes (data, números, faixa), e o servidor valida de novo. Reenviar o mesmo arquivo não duplica nada.
 - Sem `VITE_SUPABASE_*` no `.env`, ou pelo botão “Ver demonstração”, o app roda em modo demonstração sem login.
 - O `.env` é lido da **raiz** (`envDir`); só variáveis `VITE_*` chegam ao navegador.
 
 ```bash
-cd apps/web && npm test                          # lógica, telas (SSR) e login: 80 testes
-cd apps/web && npm run test:live                 # AO VIVO, sessões reais: papéis, RLS, consentimento, auditoria (se limpa sozinho)
+cd apps/web && npm test                          # lógica, telas (SSR), login e envio de laudo
+cd apps/web && npm run test:live                 # AO VIVO (precisa da API local no ar): papéis, RLS, consentimento, auditoria e envio de laudo (se limpa sozinho)
+python scripts/make_demo_upload.py               # gera o PDF sintético para enviar ao vivo (data nova, não duplica o histórico)
+python scripts/reset_demo_upload.py              # desfaz o envio do PDF da demo (ensaio) — remove só esse laudo
 cd apps/web && npm run build
 python scripts/check_bundle.py                   # confere que o bundle não vazou nenhum segredo do .env (não imprime valores)
 ```
@@ -189,4 +210,4 @@ python scripts/build_demo_data.py               # regenera os dados de demonstra
 
 ## Fases
 
-0. Esqueleto de ponta a ponta · 1. Schema + seed · 2. Teste da extração · 3. Extração completa · 4. Normalização + linha do tempo · 5. Wearables + alertas · 6. Consentimento + visão do médico · 7. Endurecer a demo
+0. Esqueleto de ponta a ponta · 1. Schema + seed · 2. Teste da extração · 3. Extração completa · 4. Normalização + linha do tempo · 5. Wearables + alertas · 6. Consentimento + visão do médico · 7. Rodar tudo local + pré-voo + roteiro (feito) · 8. (aberto) tela de envio de laudo no front, rota de alertas, revisão clínica dos limiares

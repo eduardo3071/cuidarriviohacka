@@ -5,6 +5,9 @@ import { Login } from "./auth/Login";
 import { useAuth } from "./auth/useAuth";
 import { PatientList } from "./components/PatientList";
 import { PrivacyView } from "./components/PrivacyView";
+import { UploadPanel } from "./components/UploadPanel";
+import { makeApiFetch } from "./data/apiFetch";
+import type { ApiFetch } from "./data/documents";
 import { config, isConfigured } from "./config";
 import {
   CATEGORY_LABEL,
@@ -65,8 +68,8 @@ function Status({ error, children }: { error: string | null; children: ReactNode
 }
 
 // ------------------------------------------------------------------ paciente
-function PatientHome({ rest, role }: { rest: Rest; role: Extract<Role, { kind: "patient" }> }) {
-  const [tab, setTab] = useState<"dados" | "privacidade">("dados");
+function PatientHome({ rest, api, role }: { rest: Rest; api: ApiFetch | null; role: Extract<Role, { kind: "patient" }> }) {
+  const [tab, setTab] = useState<"dados" | "enviar" | "privacidade">("dados");
   const health = useAsync<HealthData>(
     () => loadHealthData(rest, { id: role.patientId, name: role.name, birthDate: role.birthDate, sex: role.sex }, config.synthetic),
     [rest, role.patientId],
@@ -77,6 +80,11 @@ function PatientHome({ rest, role }: { rest: Rest; role: Extract<Role, { kind: "
         <button type="button" aria-pressed={tab === "dados"} onClick={() => setTab("dados")}>
           Meus dados
         </button>
+        {api && (
+          <button type="button" aria-pressed={tab === "enviar"} onClick={() => setTab("enviar")}>
+            Enviar laudo
+          </button>
+        )}
         <button type="button" aria-pressed={tab === "privacidade"} onClick={() => setTab("privacidade")}>
           Privacidade e acessos
         </button>
@@ -87,6 +95,8 @@ function PatientHome({ rest, role }: { rest: Rest; role: Extract<Role, { kind: "
         ) : (
           <Status error={health.error}>Carregando…</Status>
         )
+      ) : tab === "enviar" && api ? (
+        <UploadPanel api={api} onConfirmed={health.reload} />
       ) : (
         <PrivacyPanel rest={rest} patientId={role.patientId} />
       )}
@@ -162,6 +172,7 @@ function DoctorPatientView({ rest, doctorId, patient, onBack }: { rest: Rest; do
 function Authenticated({ client }: { client: SupabaseClient }) {
   const { state, signIn, signOut } = useAuth(client);
   const rest = useMemo(() => supabaseRest(client), [client]);
+  const api = useMemo(() => (config.apiUrl ? makeApiFetch(client, config.apiUrl) : null), [client]);
   const [demo, setDemo] = useState(false);
 
   if (demo) return <App />;
@@ -178,7 +189,7 @@ function Authenticated({ client }: { client: SupabaseClient }) {
     );
   return role.kind === "patient" ? (
     <Shell who={role.name} subtitle="paciente" onSignOut={() => void signOut()}>
-      <PatientHome rest={rest} role={role} />
+      <PatientHome rest={rest} api={api} role={role} />
     </Shell>
   ) : (
     <Shell who={role.name} subtitle="médico" onSignOut={() => void signOut()}>

@@ -564,3 +564,36 @@ button.danger { background: transparent; color: var(--above); border: 1px solid 
   padding: 10px 12px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; margin-bottom: 12px;
 }
 .past { margin-top: 12px; }
+
+/* ---------- envio e revisao de laudo ---------- */
+.dropzone {
+  display: grid; gap: 4px; place-items: center; text-align: center; cursor: pointer;
+  border: 2px dashed var(--line); border-radius: var(--radius); padding: 32px 16px; margin-top: 12px;
+}
+.dropzone:hover, .dropzone.over, .dropzone:focus-within { border-color: var(--accent); }
+.dropzone input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.working { font-weight: 600; }
+.done { display: grid; gap: 8px; justify-items: start; }
+.review { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .review { grid-template-columns: 1fr; } }
+.review-meta { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; margin: 12px 0; }
+.review input[type="text"], .review input[type="date"] {
+  width: 100%; min-width: 0; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit;
+}
+.review-table { width: 100%; border-collapse: collapse; }
+.review-table th { text-align: left; font-size: 0.85rem; color: var(--muted); padding: 4px 6px; }
+.review-table td { padding: 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.review-table tr.focused { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.review-table tr.excluded { opacity: 0.5; }
+.review-table tr.row-error td { background: color-mix(in srgb, var(--above) 10%, transparent); }
+.range-cell { white-space: nowrap; }
+.range-cell input { width: 4.5em; }
+.chip.attn { color: var(--above); border-color: var(--above); margin-left: 6px; }
+.attention-note { color: var(--above); }
+.warnings { color: var(--muted); }
+.errors { padding-left: 18px; }
+.actions { display: flex; gap: 12px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+.page-view { position: sticky; top: 8px; }
+.page-frame { position: relative; display: inline-block; max-width: 100%; }
+.page-frame img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+.bbox { position: absolute; border: 2px solid var(--above); background: color-mix(in srgb, var(--above) 18%, transparent); border-radius: 3px; pointer-events: none; }

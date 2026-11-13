@@ -4,6 +4,8 @@ const env = import.meta.env as Record<string, string | undefined>;
 export const config = {
   supabaseUrl: env.VITE_SUPABASE_URL ?? "",
   supabaseKey: env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "",
+  /** API de extracao de laudos (FastAPI). Vazia = a aba "Enviar laudo" nao aparece. */
+  apiUrl: (env.VITE_API_URL ?? "").replace(/\/+$/, ""),
   /** Enquanto os dados forem de demonstracao, a tela mantem o aviso "dados sinteticos". */
   synthetic: env.VITE_SYNTHETIC_DATA !== "false",
 };

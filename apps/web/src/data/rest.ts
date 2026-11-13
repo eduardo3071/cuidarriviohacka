@@ -24,6 +24,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     readonly code?: string,
+    readonly httpStatus?: number,
   ) {
     super(message);
     this.name = "ApiError";

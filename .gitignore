@@ -10,3 +10,4 @@ dist/
 .vercel/
 supabase/.temp/
 .DS_Store
+.dev-logs/
