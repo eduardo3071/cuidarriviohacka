@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertsPanel } from "./components/AlertsPanel";
+import { AlertsNote, AlertsPanel } from "./components/AlertsPanel";
 import { BiomarkerList } from "./components/BiomarkerList";
 import { type Section } from "./components/BottomNav";
 import { RangeRuler } from "./components/RangeRuler";
@@ -223,10 +223,10 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
           </div>
 
           {!sectionAvailable ? <p>{SAFETY_COPY.unavailable}</p> : examTab === "linha" ? (
-            <section className="panel">
-              <h2>Linha do tempo</h2>
+            <div className="tl-wrap">
+              <h2 className="sr-only">Linha do tempo</h2>
               <Timeline events={data.events} hidden={hidden} onToggle={toggleKind} />
-            </section>
+            </div>
           ) : current && latest ? (
             <div className={`exams${detailOpen ? " detail-open" : ""}`}>
               <aside className="side list-card" aria-label="Exames do histórico">
@@ -277,12 +277,12 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
       )}
 
       {shown === "alertas" && (
-        <main className="screen panel" aria-labelledby="h-alertas">
-          <h2 id="h-alertas">Relógio e alertas</h2>
+        <main className="screen alerts-screen" aria-labelledby="h-alertas">
+          <h2 id="h-alertas" className="page-title">Relógio e alertas</h2>
           {sectionAvailable ? <>
-          <p className="muted">{SAFETY_COPY.alertsIntro}</p>
+          <AlertsNote />
           <AlertsPanel alerts={data.alerts} />
-          <h2 className="sub">Sinais do relógio</h2>
+          <h3 className="sec-title">Sinais do relógio</h3>
           <WearablesPanel samples={data.wearables} />
           </> : <p>{SAFETY_COPY.unavailable}</p>}
         </main>

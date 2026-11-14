@@ -13,3 +13,9 @@
 - [x] Verificar celular, desktop, tema escuro e testes, sem avançar para outras telas.
 
 118 testes passaram. Navegador: 360, 375, 390, 768 e 1280 px sem rolagem horizontal; validação, carregamento, erros simulados e demonstração conferidos. Acesso real e armazenamento de perfis não foram alterados nesta fase visual.
+
+## Fase 3 — Linha do tempo e relógio
+
+- [x] Linha do tempo com fio, chips roláveis, ano fixo, cartões e detalhe na folha.
+- [x] Alertas com nota, chip de gravidade, "Ver por quê", folha/painel de evidência e chamada para o médico.
+- [x] Sinais do relógio em cartões com média por dia dos últimos 7 dias.

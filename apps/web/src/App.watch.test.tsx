@@ -19,7 +19,7 @@ describe("Dashboard: relogio e alertas (Fase 5)", () => {
 
   it("a aba do relogio mostra os 5 alertas com 'Por que disparou?' e os 6 graficos de sinais", () => {
     expect(count(watch, 'data-testid="alert"')).toBe(5);
-    expect(count(watch, "Por que disparou?")).toBe(5);
+    expect(count(watch, "Ver por quê")).toBe(10);
     expect(count(watch, 'data-testid="wear-card"')).toBe(6);
     expect(watch).not.toContain('aria-label="Exames do histórico"');
   });
@@ -35,9 +35,10 @@ describe("Dashboard: relogio e alertas (Fase 5)", () => {
   });
 
   it("os cartoes de sinais mostram o ultimo valor com a unidade certa", () => {
-    expect(watch).toContain("7 avisos no período");
-    expect(watch).toMatch(/\d+\/\d+ mmHg/); // pressao sistolica/diastolica
-    expect(watch).toMatch(/\d+(,\d+)? h<\/strong>/); // sono em horas, nao em minutos
+    expect(watch).toMatch(/<strong>\d+<\/strong> <span class="caption">avisos?<\/span>/);
+    expect(watch).toMatch(/<strong>\d+\/\d+<\/strong> <span class="caption">mmHg/); // pressao sistolica/diastolica
+    expect(watch).toMatch(/<strong>\d(,\d)?<\/strong> <span class="caption">h</); // sono em horas, nao em minutos
+    expect(watch).toContain("últimos 7 dias");
   });
 
   it("sem alertas nao mostra o aviso", () => {
