@@ -1,0 +1,75 @@
+/* Fase 5A: privacidade e acessos. */
+.pv .caption { font-size: 14px; color: var(--color-ink-2); margin: 0; }
+.pv .sec-title { font: 600 22px/26px var(--font-display, var(--font)); color: var(--color-ink); margin: 24px 0 12px; padding: 0; }
+.pv .page-title { margin: 16px 0 0; }
+.pv-main { min-width: 0; display: grid; align-content: start; }
+.pv-main > .caption { margin-bottom: 12px; }
+.pv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.pv-doc { padding: 16px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface); display: grid; gap: 8px; }
+.pv-doc-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pv-doc-name { font: 700 17px/1.3 var(--font); color: var(--color-ink); }
+.pv-active { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: var(--color-in-range-bg); color: var(--color-in-range); font: 600 14px var(--font); }
+.pv-cats { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.pv-cat { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: var(--color-brand-soft); color: var(--color-brand); font: 600 14px var(--font); }
+.pv-until { display: flex; align-items: center; gap: 6px; }
+.pv-revoke.ds-button, .pv-open.ds-button { width: 100%; }
+.pv-open.ds-button { margin-top: 12px; }
+.pv-empty { padding: 16px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface-2); color: var(--color-ink-2); margin: 0; font-size: 16px; }
+.pv-log { padding: 12px 16px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface); display: grid; gap: 2px; }
+.pv-log-t { font: 600 16px/1.35 var(--font); color: var(--color-ink); }
+.pv-past { margin-top: 12px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface); }
+.pv-past summary { min-height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; font: 600 16px var(--font); color: var(--color-ink); }
+.pv-past summary::-webkit-details-marker { display: none; }
+.pv-past summary svg { color: var(--color-ink-2); transition: transform .2s; }
+.pv-past[open] summary svg { transform: rotate(180deg); }
+.pv-past ul { margin: 0; padding: 0 16px 16px 32px; color: var(--color-ink-2); }
+.pv-err { margin: 12px 0 0; padding: 12px 16px; border-radius: 12px; background: var(--color-urgent-bg); color: var(--color-urgent); font: 600 14px var(--font); }
+.pv-confirm { display: grid; gap: 12px; }
+.pv-confirm > p { margin: 0; color: var(--color-ink-2); font-size: 16px; }
+.pv-confirm .ds-button-danger-solid { width: 100%; }
+.pv-side { display: none; }
+
+/* Opções do assistente */
+.pv-q { border: 0; margin: 0; padding: 0; min-width: 0; }
+.pv-q .sec-title { margin-top: 0; }
+.pv-opts { display: grid; gap: 12px; }
+.pv-days { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pv-days .pv-opt { min-height: 72px; justify-content: center; }
+.pv-opt { position: relative; display: grid; gap: 2px; align-content: center; padding: 16px; padding-right: 44px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface); cursor: pointer; }
+.pv-opt.is-sel { border: 2px solid var(--color-brand); padding: 15px 43px 15px 15px; background: var(--color-brand-soft); }
+.pv-opt:focus-within { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+.pv-opt-t { font: 600 16px/1.3 var(--font); color: var(--color-ink); }
+.pv-opt-check { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--color-brand); }
+.pv-review { padding: 16px; border-radius: 16px; background: var(--color-surface-2); border: 1px solid var(--color-line); display: grid; gap: 8px; }
+.pv-review p { margin: 0; font-size: 16px; color: var(--color-ink); }
+
+/* Assistente em tela cheia (celular) */
+.pv-wiz { position: fixed; inset: 0; z-index: 60; background: var(--color-background); display: flex; flex-direction: column; height: 100dvh; padding-top: env(safe-area-inset-top); }
+.pv-wiz-top { position: relative; height: 56px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--color-line); background: var(--color-surface); flex: none; }
+.pv-cancel { position: absolute; left: 8px; top: 6px; min-height: 44px; display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--color-brand); font: 600 16px var(--font); cursor: pointer; padding: 0 8px; }
+.pv-wire { list-style: none; margin: 0; padding: 0 32px; height: 32px; display: flex; align-items: center; justify-content: space-between; position: relative; flex: none; }
+.pv-wire::before { content: ""; position: absolute; left: 39px; right: 39px; top: 50%; height: 2.5px; transform: translateY(-50%); background: var(--color-brand); }
+.pv-wire li { position: relative; width: 14px; height: 14px; border-radius: 50%; box-sizing: border-box; border: 2px solid var(--color-line); background: var(--color-surface); }
+.pv-wire li.is-now { border: 3px solid var(--color-brand); }
+.pv-wire li.is-done { border: 0; background: var(--color-brand); }
+.pv-wiz-body { flex: 1; overflow-y: auto; padding: 16px; }
+.pv-wiz-bar { flex: none; min-height: 80px; box-sizing: border-box; display: flex; gap: 8px; align-items: center; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: var(--color-surface); border-top: 1px solid var(--color-line); }
+.pv-back.ds-button { width: 96px; flex: none; }
+.pv-next.ds-button { flex: 1; }
+
+/* Computador */
+@media (min-width: 1024px) {
+  .pv-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 24px; align-items: start; }
+  .pv-open.ds-button { display: none; }
+  .pv-side { display: block; position: sticky; top: 96px; padding: 24px; margin-top: 24px; }
+  .pv-side .sec-title { margin-top: 0; }
+  .pv-wiz { display: none; }
+  .pv-stack { display: grid; gap: 16px; }
+  .pv-stack .ds-button-primary { width: 100%; }
+  .pv-vsteps { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; position: relative; }
+  .pv-vsteps::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2.5px; background: var(--color-brand); }
+  .pv-vstep { position: relative; padding-left: 32px; }
+  .pv-vdot { position: absolute; left: 0; top: 6px; width: 16px; height: 16px; border-radius: 50%; box-sizing: border-box; border: 3px solid var(--color-brand); background: var(--color-surface); }
+  .pv-vstep.is-done .pv-vdot { background: var(--color-brand); }
+  .pv-vstep .sec-title { font-size: 18px; line-height: 24px; margin-bottom: 12px; }
+}

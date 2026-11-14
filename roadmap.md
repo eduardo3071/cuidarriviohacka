@@ -24,3 +24,9 @@
 
 - [x] Indicador de passos, envio (foto/arquivo/arrastar), leitura, conferência com folhas Editar e Ver no laudo, sucesso e repetido.
 - [ ] Testar com um laudo real em conta de paciente.
+
+## Fase 5A — Privacidade do paciente
+
+- [x] Cartões de médicos com acesso, revogar com confirmação, registro de quem abriu, encerrados recolhíveis.
+- [x] Assistente de 4 passos (tela cheia no celular, embutido no computador).
+- [ ] Testar liberar e revogar com conta real.
