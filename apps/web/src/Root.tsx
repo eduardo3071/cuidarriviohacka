@@ -180,7 +180,7 @@ function Authenticated({ client }: { client: SupabaseClient }) {
   const api = useMemo(() => (config.apiUrl ? makeApiFetch(client, config.apiUrl) : null), [client]);
   const [demo, setDemo] = useState(false);
 
-  if (demo) return <App />;
+  if (demo) return <App routed />;
   if (state.status === "loading") return <Status error={null}>Carregando…</Status>;
   if (state.status === "error") return <Status error={state.message}>{null}</Status>;
   if (state.status === "out") return <Login onSubmit={signIn} onDemo={() => setDemo(true)} />;
@@ -201,6 +201,6 @@ function Authenticated({ client }: { client: SupabaseClient }) {
 
 export default function Root() {
   // sem URL/chave do Supabase no .env, o app roda so em modo demonstracao
-  if (!isConfigured) return <App />;
+  if (!isConfigured) return <App routed />;
   return <Authenticated client={getSupabase()} />;
 }

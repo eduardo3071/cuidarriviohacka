@@ -25,6 +25,7 @@ import type { EventKind, HealthData } from "./types";
 import type { Category } from "./data/api";
 import { SAFETY_COPY } from "./lib/safetyCopy";
 import { PitchTour } from "./pitch/PitchTour";
+import { pathFor, routeFromPath } from "./routes";
 import { UploadFlow } from "./components/UploadFlow";
 import { config } from "./config";
 import { addExam } from "./demo/addExam";
@@ -37,7 +38,7 @@ export const DEFAULT_BIOMARKER = "Glicemia de jejum";
 export type View = Section;
 type ExamTab = "resultados" | "linha";
 
-export default function App({ source = demoSource }: { source?: DataSource }) {
+export default function App({ source = demoSource, routed = false }: { source?: DataSource; routed?: boolean }) {
   const [data, setData] = useState<HealthData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [presenting, setPresenting] = useState(false);
@@ -78,6 +79,7 @@ export default function App({ source = demoSource }: { source?: DataSource }) {
   return (
     <Dashboard
       data={data}
+      routed={routed}
       onPresent={() => setPresenting(true)}
       upload={demoApi ? ({ goExams }) => <UploadFlow api={demoApi} onConfirmed={() => {}} onViewExams={goExams} /> : undefined}
       privacy={<DemoPrivacy rest={privacyRest} />}
@@ -106,12 +108,35 @@ export interface DashboardProps {
   onSignOut?: () => void;
   /** Modo demonstração: mostra o botão "Apresentar" (pitch guiado). */
   onPresent?: () => void;
+  /** Demonstração com URL por aba (/exames, /enviar, /privacidade…): lê a aba inicial do endereço e o mantém em dia. */
+  routed?: boolean;
 }
 
-export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy, onDemo, onSignOut, onPresent }: DashboardProps) {
-  const [view, setView] = useState<View>(initialView);
-  const [examTab, setExamTab] = useState<ExamTab>(initialExamTab);
-  const [detailOpen, setDetailOpen] = useState(initialView === "exames");
+export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy, onDemo, onSignOut, onPresent, routed = false }: DashboardProps) {
+  const start = (routed && typeof window !== "undefined" ? routeFromPath(window.location.pathname) : null) ?? { view: initialView, tab: initialExamTab };
+  const [view, setView] = useState<View>(start.view);
+  const [examTab, setExamTab] = useState<ExamTab>(start.tab);
+  const [detailOpen, setDetailOpen] = useState(start.view === "exames");
+
+  // endereço acompanha a aba (e o botão voltar do navegador devolve a aba anterior)
+  useEffect(() => {
+    if (!routed) return;
+    const cur = routeFromPath(window.location.pathname);
+    if (cur && cur.view === view && cur.tab === examTab) return; // já é este endereço (inclui o apelido /acessos)
+    window.history[cur ? "pushState" : "replaceState"](null, "", pathFor(view, examTab)); // 1ª vez a partir de "/": sem entrada extra no histórico
+  }, [routed, view, examTab]);
+  useEffect(() => {
+    if (!routed) return;
+    const onPop = () => {
+      const r = routeFromPath(window.location.pathname);
+      if (!r) return;
+      setView(r.view);
+      setExamTab(r.tab);
+      if (r.view === "exames") setDetailOpen(true);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [routed]);
   const uploadNode = typeof upload === "function" ? upload({ goExams: () => { setExamTab("resultados"); setView("exames"); } }) : upload;
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);

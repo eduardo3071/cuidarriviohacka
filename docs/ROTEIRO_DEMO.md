@@ -9,6 +9,8 @@ Um passo a passo guiado para o pitch do software, **sem login, sem banco e sem A
 **Como abrir:** em **Ver demonstração**, clique em **Apresentar** (na barra superior; no celular é só o ícone ▶). Ou abra direto `http://localhost:5173/apresentar`
 (para ensaiar um trecho: `/apresentar?passo=6`). Offline: `python scripts/dev.py --offline`.
 
+**Links diretos por aba** (demonstração da Marta, sem login nem cadastro): `/inicio`, `/exames`, `/exames/linha-do-tempo`, `/enviar`, `/alertas`, `/privacidade` (apelido `/acessos`). A URL acompanha a aba e o botão voltar do navegador funciona. Em hospedagem estática, o servidor precisa devolver o `index.html` para esses caminhos (já configurado em `apps/web/vercel.json`).
+
 **Como conduzir:** o painel diz **o que falar** em cada passo e **qual gargalo da Rivio ele resolve**; a tela mostra a parte certa e destaca em âmbar o que você está explicando.
 | Tecla | Faz |
 |---|---|
