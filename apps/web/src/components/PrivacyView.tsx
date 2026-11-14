@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Sheet } from "./Sheet";
 import { CATEGORIES, CATEGORY_LABEL, consentStatus, type AccessEntry, type Category, type Consent, type Doctor } from "../data/api";
 
 const DAYS = [
@@ -30,6 +31,7 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
   const [days, setDays] = useState(30);
   const [busy, setBusy] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [toRevoke, setToRevoke] = useState<Consent | null>(null);
 
   const doctorName = (id: string) => doctors.find((d) => d.id === id)?.full_name ?? "Médico";
   const active = consents.filter((c) => consentStatus(c, now) === "active");
@@ -58,7 +60,8 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
   return (
     <div className="privacy">
       <section className="panel">
-        <h2>Quem pode ver os seus dados</h2>
+        <h2>Privacidade e acessos</h2>
+        <h3 className="list-title">Quem pode ver os seus dados</h3>
         <p className="muted">
           Nada é compartilhado sem a sua permissão. Você escolhe o médico, o que ele vê e por quanto tempo, e pode retirar o acesso a
           qualquer momento.
@@ -75,7 +78,7 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
                     Vê: {c.categories.map(catLabel).join(", ")} · até {fmtDate(c.expires_at)}
                   </div>
                 </div>
-                <button type="button" className="danger" disabled={busy} onClick={() => void run(() => onRevoke(c.id))}>
+                <button type="button" className="danger" disabled={busy} onClick={() => setToRevoke(c)}>
                   Revogar acesso
                 </button>
               </li>
@@ -133,9 +136,11 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
               {shownError}
             </p>
           )}
-          <button type="submit" className="primary" disabled={busy}>
-            Liberar acesso
-          </button>
+          <div className="sticky-action">
+            <button type="submit" className="primary wide" disabled={busy}>
+              Liberar acesso
+            </button>
+          </div>
         </form>
       </section>
 
@@ -165,6 +170,33 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
           </details>
         )}
       </section>
+      <Sheet open={!!toRevoke} title="Revogar acesso?" onClose={() => setToRevoke(null)}>
+        {toRevoke && (
+          <div className="confirm">
+            <p>
+              <strong>{doctorName(toRevoke.doctor_id)}</strong> deixará de ver {toRevoke.categories.map(catLabel).join(", ")} na hora. Você pode liberar de
+              novo depois, se quiser.
+            </p>
+            <div className="sheet-actions">
+              <button
+                type="button"
+                className="danger wide"
+                disabled={busy}
+                onClick={() => {
+                  const id = toRevoke.id;
+                  setToRevoke(null);
+                  void run(() => onRevoke(id));
+                }}
+              >
+                Sim, revogar acesso
+              </button>
+              <button type="button" className="secondary wide" data-autofocus onClick={() => setToRevoke(null)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+      </Sheet>
     </div>
   );
 }

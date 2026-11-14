@@ -15,7 +15,7 @@ import {
 import type { Flag } from "../types";
 
 const DEFAULT_W = 760; // largura ate o navegador medir (e no teste de renderizacao em servidor)
-const M = { top: 30, right: 20, bottom: 34, left: 54 };
+const M = { top: 30, right: 22, bottom: 36, left: 58 };
 const BAR_W = 14;
 
 /** Altura proporcional a largura, entre 220 e 340: em tela estreita o grafico fica mais baixo, nao ilegivel. */
@@ -37,6 +37,8 @@ export interface SeriesChartProps {
   labIndex: Map<string, number>;
   selectedKey: string | null;
   onSelect: (key: string) => void;
+  /** Toque/Enter num ponto: abre o detalhe. */
+  onOpen?: (key: string) => void;
 }
 
 /**
@@ -44,7 +46,7 @@ export interface SeriesChartProps {
  * vertical atras dele), e a bandeira (forma/cor) e decidida por essa faixa. Valores de laboratorios e
  * unidades diferentes ja chegam na unidade canonica.
  */
-export function SeriesChart({ series, labIndex, selectedKey, onSelect }: SeriesChartProps) {
+export function SeriesChart({ series, labIndex, selectedKey, onSelect, onOpen }: SeriesChartProps) {
   const { points, unit, biomarker } = series;
   const [figRef, W] = useWidth(DEFAULT_W, 280);
   const H = heightFor(W);
@@ -99,9 +101,18 @@ export function SeriesChart({ series, labIndex, selectedKey, onSelect }: SeriesC
               role="button"
               aria-pressed={selected}
               aria-label={`${fmtDate(p.collected_at)}, ${labName(p)}: ${fmtNum(p.value)} ${unit}. ${FLAG_LABEL[p.flag]}.`}
-              onClick={() => onSelect(key)}
+              onClick={() => {
+                onSelect(key);
+                onOpen?.(key);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(key);
+                  onOpen?.(key);
+                }
+              }}
               onFocus={() => onSelect(key)}
-              onMouseEnter={() => onSelect(key)}
             >
               {bar && (
                 <g data-testid="range-bar" data-open-low={bar.openLow} data-open-high={bar.openHigh}>
@@ -119,7 +130,7 @@ export function SeriesChart({ series, labIndex, selectedKey, onSelect }: SeriesC
               )}
               {selected && <circle className="ring" cx={px} cy={py} r={11} />}
               <Marker flag={p.flag} cx={px} cy={py} />
-              <circle className="hit" cx={px} cy={py} r={13} />
+              <circle className="hit" cx={px} cy={py} r={22} />
             </g>
           );
         })}
@@ -137,7 +148,7 @@ export function SeriesChart({ series, labIndex, selectedKey, onSelect }: SeriesC
         <p className="legend-help">
           A <strong>barra</strong> atrás de cada ponto é a faixa de referência do laudo daquele laboratório.{" "}
           <span className="sym marker-in_range">●</span> dentro da faixa · <span className="sym marker-above">▲</span> acima ·{" "}
-          <span className="sym marker-below">▼</span> abaixo
+          <span className="sym marker-below">▼</span> abaixo. Toque em um ponto para ver o detalhe.
         </p>
       </figcaption>
     </figure>

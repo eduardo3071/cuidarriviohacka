@@ -71,7 +71,7 @@ export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: 
 
   if (step.k === "review")
     return (
-      <div className="app">
+      <div className="screen">
         <ReviewForm
           review={step.review}
           draft={step.draft}
@@ -86,7 +86,7 @@ export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: 
     );
 
   return (
-    <div className="app">
+    <div className="screen">
       <section className="panel upload">
         <h2>Enviar laudo</h2>
         <p className="muted">
@@ -137,7 +137,8 @@ export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: 
             onDragLeave={() => setOver(false)}
             onDrop={onDrop}
           >
-            <span>Arraste o arquivo aqui ou clique para escolher</span>
+            <span className="dz-button">Escolher arquivo ou tirar foto</span>
+            <span className="muted">No computador, também dá para arrastar o arquivo até aqui.</span>
             <span className="muted">PDF, JPEG, PNG ou WebP, até 15 MB</span>
             <input ref={input} type="file" accept="application/pdf,image/jpeg,image/png,image/webp,.pdf,.jpg,.jpeg,.png,.webp" onChange={(e) => pick(e.target.files)} />
           </label>

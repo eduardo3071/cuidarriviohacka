@@ -1,0 +1,2 @@
+- The web app (apps/web) navigates via `Dashboard` sections driven by `BottomNav` (no router); patient screens (upload, privacy) are injected as props so the doctor's read-only view simply omits them.
+- Details and confirmations use the shared `Sheet` component (bottom sheet on phones, centered dialog from 768px) instead of inline panels or tables.

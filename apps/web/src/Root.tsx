@@ -6,6 +6,7 @@ import { useAuth } from "./auth/useAuth";
 import { PatientList } from "./components/PatientList";
 import { PrivacyView } from "./components/PrivacyView";
 import { UploadPanel } from "./components/UploadPanel";
+import { ConnectionNotice, Loading } from "./components/ConnectionNotice";
 import { makeApiFetch } from "./data/apiFetch";
 import type { ApiFetch } from "./data/documents";
 import { config, isConfigured } from "./config";
@@ -64,43 +65,36 @@ function Shell({ who, subtitle, onSignOut, children }: { who: string; subtitle: 
 }
 
 function Status({ error, children }: { error: string | null; children: ReactNode }) {
-  return <main className="app">{error ? <p role="alert">{error}</p> : <p>{children}</p>}</main>;
+  return (
+    <main className="app">
+      <ConnectionNotice />
+      {error ? <p role="alert">{error}</p> : typeof children === "string" && children.startsWith("Carregando") ? <Loading /> : <p>{children}</p>}
+    </main>
+  );
 }
 
 // ------------------------------------------------------------------ paciente
 function PatientHome({ rest, api, role }: { rest: Rest; api: ApiFetch | null; role: Extract<Role, { kind: "patient" }> }) {
-  const [tab, setTab] = useState<"dados" | "enviar" | "privacidade">("dados");
   const health = useAsync<HealthData>(
     () => loadHealthData(rest, { id: role.patientId, name: role.name, birthDate: role.birthDate, sex: role.sex }, config.synthetic),
     [rest, role.patientId],
   );
+  if (!health.data) return <Status error={health.error}>Carregando…</Status>;
   return (
-    <>
-      <nav className="tabs shelltabs" aria-label="Área do paciente">
-        <button type="button" aria-pressed={tab === "dados"} onClick={() => setTab("dados")}>
-          Meus dados
-        </button>
-        {api && (
-          <button type="button" aria-pressed={tab === "enviar"} onClick={() => setTab("enviar")}>
-            Enviar laudo
-          </button>
-        )}
-        <button type="button" aria-pressed={tab === "privacidade"} onClick={() => setTab("privacidade")}>
-          Privacidade e acessos
-        </button>
-      </nav>
-      {tab === "dados" ? (
-        health.data ? (
-          <Dashboard data={health.data} />
+    <Dashboard
+      data={health.data}
+      upload={
+        api ? (
+          <UploadPanel api={api} onConfirmed={health.reload} />
         ) : (
-          <Status error={health.error}>Carregando…</Status>
+          <main className="screen panel">
+            <h2>Enviar laudo</h2>
+            <p>O envio de laudos não está disponível agora. Tente mais tarde.</p>
+          </main>
         )
-      ) : tab === "enviar" && api ? (
-        <UploadPanel api={api} onConfirmed={health.reload} />
-      ) : (
-        <PrivacyPanel rest={rest} patientId={role.patientId} />
-      )}
-    </>
+      }
+      privacy={<PrivacyPanel rest={rest} patientId={role.patientId} />}
+    />
   );
 }
 
@@ -114,7 +108,7 @@ function PrivacyPanel({ rest, patientId }: { rest: Rest; patientId: string }) {
   );
   if (!state.data) return <Status error={state.error}>Carregando…</Status>;
   return (
-    <div className="app">
+    <div className="screen">
       <PrivacyView
         doctors={state.data.doctors}
         consents={state.data.consents}
@@ -158,14 +152,14 @@ function DoctorPatientView({ rest, doctorId, patient, onBack }: { rest: Rest; do
           ← Voltar aos pacientes
         </button>
         <span>
-          Somente leitura. Liberado pelo paciente: {patient.categories.map((c) => CATEGORY_LABEL[c]).join(", ")}.
+          Somente leitura: nada pode ser alterado, apagado ou enviado. Liberado pelo paciente: {patient.categories.map((c) => CATEGORY_LABEL[c]).join(", ")}.
         </span>
       </div>
     ),
     [patient.categories, onBack],
   );
   if (!health.data) return <Status error={health.error}>Carregando…</Status>;
-  return <Dashboard data={health.data} banner={banner} />;
+  return <Dashboard data={health.data} banner={banner} readOnly />;
 }
 
 // ------------------------------------------------------------------ raiz

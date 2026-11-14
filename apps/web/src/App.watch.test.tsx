@@ -9,9 +9,9 @@ const count = (html: string, needle: string) => html.split(needle).length - 1;
 
 describe("Dashboard: relogio e alertas (Fase 5)", () => {
   const exams = renderToStaticMarkup(<Dashboard data={data} />);
-  const watch = renderToStaticMarkup(<Dashboard data={data} initialView="relogio" />);
+  const watch = renderToStaticMarkup(<Dashboard data={data} initialView="alertas" />);
 
-  it("na aba de exames avisa que 3 sinais do relogio merecem atencao e leva para a aba", () => {
+  it("no inicio avisa que 3 sinais do relogio merecem atencao e leva para a aba", () => {
     expect(exams).toContain("3 sinais do relógio merecem atenção");
     expect(exams).toContain('class="alert-banner"');
     expect(exams).toContain('aria-label="3 alertas para atenção"');
@@ -22,7 +22,6 @@ describe("Dashboard: relogio e alertas (Fase 5)", () => {
     expect(count(watch, "Por que disparou?")).toBe(5);
     expect(count(watch, 'data-testid="wear-card"')).toBe(6);
     expect(watch).not.toContain('aria-label="Exames do histórico"');
-    expect(count(watch, 'data-testid="event"')).toBe(33);
   });
 
   it("explica que os alertas vem de regras fixas e nao de IA, e que nao sao diagnostico", () => {

@@ -53,61 +53,59 @@ export function ReviewForm({ review, draft, onChange, errors, rowErrors, busy, o
           <input id="collected" type="date" value={draft.collectedAt} onChange={(e) => onChange({ ...draft, collectedAt: e.target.value })} required />
         </div>
 
-        <div className="table-wrap open">
-          <table className="review-table">
-            <caption className="sr-only">Resultados lidos do laudo</caption>
-            <thead>
-              <tr>
-                <th scope="col">Guardar</th>
-                <th scope="col">Exame</th>
-                <th scope="col">Valor</th>
-                <th scope="col">Unidade</th>
-                <th scope="col">Faixa do laudo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {draft.rows.map((r) => {
-                const err = rowErrors[r.id];
-                return (
-                  <tr
-                    key={r.id}
-                    className={[focused?.id === r.id ? "focused" : "", err ? "row-error" : "", r.include ? "" : "excluded"].join(" ").trim()}
-                    onFocus={() => setFocus(r.id)}
-                    onClick={() => setFocus(r.id)}
-                  >
-                    <td>
-                      <input type="checkbox" aria-label={`Guardar ${r.original.raw_name}`} checked={r.include} onChange={(e) => setRow(r.id, { include: e.target.checked })} />
-                    </td>
-                    <td>
-                      <input type="text" aria-label={`Nome do exame ${r.id + 1}`} value={r.raw_name} onChange={(e) => setRow(r.id, { raw_name: e.target.value })} />
-                      {needsAttention(r.original) && (
-                        <span className="chip attn" title={r.original.notes.join("; ") || "confiança baixa"}>
-                          conferir
-                        </span>
-                      )}
-                      {err && (
-                        <div role="alert" className="form-error">
-                          {err}
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      <input type="text" inputMode="decimal" aria-label={`Valor de ${r.original.raw_name}`} value={r.value} onChange={(e) => setRow(r.id, { value: e.target.value })} />
-                    </td>
-                    <td>
-                      <input type="text" aria-label={`Unidade de ${r.original.raw_name}`} value={r.unit} onChange={(e) => setRow(r.id, { unit: e.target.value })} />
-                    </td>
-                    <td className="range-cell">
-                      <input type="text" inputMode="decimal" aria-label={`Mínimo de ${r.original.raw_name}`} value={r.ref_low} onChange={(e) => setRow(r.id, { ref_low: e.target.value })} />
-                      <span aria-hidden="true"> a </span>
-                      <input type="text" inputMode="decimal" aria-label={`Máximo de ${r.original.raw_name}`} value={r.ref_high} onChange={(e) => setRow(r.id, { ref_high: e.target.value })} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <ul className="review-cards" aria-label="Resultados lidos do laudo">
+          {draft.rows.map((r) => {
+            const err = rowErrors[r.id];
+            const id = `r${r.id}`;
+            return (
+              <li
+                key={r.id}
+                className={["rcard", focused?.id === r.id ? "focused" : "", err ? "row-error" : "", r.include ? "" : "excluded"].join(" ").trim()}
+                onFocus={() => setFocus(r.id)}
+                onClick={() => setFocus(r.id)}
+              >
+                <label className="check big">
+                  <input type="checkbox" aria-label={`Guardar ${r.original.raw_name}`} checked={r.include} onChange={(e) => setRow(r.id, { include: e.target.checked })} />
+                  <span>Guardar</span>
+                  {needsAttention(r.original) && (
+                    <span className="chip attn" title={r.original.notes.join("; ") || "confiança baixa"}>
+                      ▲ conferir
+                    </span>
+                  )}
+                </label>
+                <div className="field">
+                  <label htmlFor={`${id}-n`}>Nome do exame</label>
+                  <input id={`${id}-n`} type="text" aria-label={`Nome do exame ${r.id + 1}`} value={r.raw_name} onChange={(e) => setRow(r.id, { raw_name: e.target.value })} />
+                </div>
+                <div className="field-row">
+                  <div className="field">
+                    <label htmlFor={`${id}-v`}>Valor</label>
+                    <input id={`${id}-v`} type="text" inputMode="decimal" aria-label={`Valor de ${r.original.raw_name}`} value={r.value} onChange={(e) => setRow(r.id, { value: e.target.value })} />
+                  </div>
+                  <div className="field">
+                    <label htmlFor={`${id}-u`}>Unidade</label>
+                    <input id={`${id}-u`} type="text" aria-label={`Unidade de ${r.original.raw_name}`} value={r.unit} onChange={(e) => setRow(r.id, { unit: e.target.value })} />
+                  </div>
+                </div>
+                <div className="field-row">
+                  <div className="field">
+                    <label htmlFor={`${id}-lo`}>Mínimo da faixa do laudo</label>
+                    <input id={`${id}-lo`} type="text" inputMode="decimal" aria-label={`Mínimo de ${r.original.raw_name}`} value={r.ref_low} onChange={(e) => setRow(r.id, { ref_low: e.target.value })} />
+                  </div>
+                  <div className="field">
+                    <label htmlFor={`${id}-hi`}>Máximo da faixa do laudo</label>
+                    <input id={`${id}-hi`} type="text" inputMode="decimal" aria-label={`Máximo de ${r.original.raw_name}`} value={r.ref_high} onChange={(e) => setRow(r.id, { ref_high: e.target.value })} />
+                  </div>
+                </div>
+                {err && (
+                  <div role="alert" className="form-error">
+                    {err}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
 
         {errors.length > 0 && (
           <ul role="alert" className="form-error errors">
@@ -116,11 +114,11 @@ export function ReviewForm({ review, draft, onChange, errors, rowErrors, busy, o
             ))}
           </ul>
         )}
-        <div className="actions">
+        <div className="actions sticky-action">
           <button type="button" className="primary" disabled={busy || included === 0} onClick={onConfirm}>
             {busy ? "Guardando…" : `Guardar ${included} ${included === 1 ? "resultado" : "resultados"} no meu histórico`}
           </button>
-          <button type="button" className="link" disabled={busy} onClick={onCancel}>
+          <button type="button" className="secondary" disabled={busy} onClick={onCancel}>
             Descartar e voltar
           </button>
         </div>
