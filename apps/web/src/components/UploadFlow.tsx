@@ -23,7 +23,7 @@ type Step =
 const msg = (e: unknown) => (e instanceof ApiError ? e.message : "Algo deu errado. Tente de novo.");
 
 /** Lógica do envio (API e estado). A parte visual fica em UploadPanel. */
-export function UploadFlow({ api, onConfirmed }: { api: ApiFetch; onConfirmed: () => void }) {
+export function UploadFlow({ api, onConfirmed, onViewExams }: { api: ApiFetch; onConfirmed: () => void; onViewExams?: () => void }) {
   const [step, setStep] = useState<Step>({ k: "idle" });
 
   async function handleFile(file: File) {
@@ -63,6 +63,7 @@ export function UploadFlow({ api, onConfirmed }: { api: ApiFetch; onConfirmed: (
       step={step.k}
       onFile={(f) => void handleFile(f)}
       onReset={reset}
+      onViewExams={onViewExams}
       workingLabel={step.k === "working" ? step.label : undefined}
       errorMessage={step.k === "error" ? step.message : undefined}
       result={step.k === "done" ? step.result : undefined}

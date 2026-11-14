@@ -88,7 +88,7 @@ function PatientHome({ rest, api, role, onDemo, onSignOut }: { rest: Rest; api: 
       onSignOut={onSignOut}
       upload={
         api ? (
-          <UploadFlow api={api} onConfirmed={health.reload} />
+          ({ goExams }) => <UploadFlow api={api} onConfirmed={health.reload} onViewExams={goExams} />
         ) : (
           <main className="screen panel">
             <h2>Enviar laudo</h2>

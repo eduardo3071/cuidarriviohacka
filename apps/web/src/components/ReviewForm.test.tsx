@@ -49,6 +49,6 @@ describe("ReviewForm", () => {
     expect(html).toContain("O valor precisa ser um número.");
   });
   it("ocupado desabilita o envio", () => {
-    expect(render(review([obs()]), { busy: true })).toMatch(/<button[^>]*disabled[^>]*>Guardando…/);
+    expect(render(review([obs()]), { busy: true })).toMatch(/<button[^>]*disabled[^>]*>(<span>)?Guardando…/);
   });
 });

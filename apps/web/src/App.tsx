@@ -72,7 +72,8 @@ export interface DashboardProps {
   /** Somente apresentação: as permissões são aplicadas antes do carregamento dos dados. */
   availableCategories?: Category[];
   /** Tela de envio de laudo (paciente logado). Sem ela, explica como liberar. */
-  upload?: ReactNode;
+  /** Tela de envio; como função, recebe o atalho para abrir Exames. */
+  upload?: ReactNode | ((nav: { goExams: () => void }) => ReactNode);
   /** Tela "Privacidade e acessos" (paciente logado). */
   privacy?: ReactNode;
   /** Primeiro acesso: abre a demonstração. */
@@ -85,6 +86,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
   const [view, setView] = useState<View>(initialView);
   const [examTab, setExamTab] = useState<ExamTab>(initialExamTab);
   const [detailOpen, setDetailOpen] = useState(initialView === "exames");
+  const uploadNode = typeof upload === "function" ? upload({ goExams: () => { setExamTab("resultados"); setView("exames"); } }) : upload;
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [sheetKey, setSheetKey] = useState<string | null>(null);
@@ -99,7 +101,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
     return (
       <AppShell current={view} onGo={(s) => s !== "pacientes" && setView(s)} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner}
         title={view === "enviar" ? "Enviar laudo" : view === "acessos" ? "Privacidade e acessos" : view === "alertas" ? "Alertas" : view === "exames" ? "Exames" : "Início"}>
-        {view === "enviar" ? (upload ?? <main className="screen panel"><h2>Enviar laudo</h2><p>Na demonstração não é possível enviar laudos.</p></main>)
+        {view === "enviar" ? (uploadNode ?? <main className="screen panel"><h2>Enviar laudo</h2><p>Na demonstração não é possível enviar laudos.</p></main>)
           : view === "acessos" && privacy ? privacy
           : <FirstAccess patientName={data.patient.full_name} onSendFirst={() => setView("enviar")} onDemo={onDemo} />}
       </AppShell>
@@ -289,7 +291,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
       )}
 
       {shown === "enviar" && !readOnly &&
-        (upload ?? (
+        (uploadNode ?? (
           <main className="screen panel">
             <h2>Enviar laudo</h2>
             <p>Na demonstração não é possível enviar laudos. Entre com a sua conta para enviar um PDF ou uma foto do laudo.</p>

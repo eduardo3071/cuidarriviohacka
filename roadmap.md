@@ -19,3 +19,8 @@
 - [x] Linha do tempo com fio, chips roláveis, ano fixo, cartões e detalhe na folha.
 - [x] Alertas com nota, chip de gravidade, "Ver por quê", folha/painel de evidência e chamada para o médico.
 - [x] Sinais do relógio em cartões com média por dia dos últimos 7 dias.
+
+## Fase 4 — Enviar laudo
+
+- [x] Indicador de passos, envio (foto/arquivo/arrastar), leitura, conferência com folhas Editar e Ver no laudo, sucesso e repetido.
+- [ ] Testar com um laudo real em conta de paciente.
