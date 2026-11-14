@@ -1,7 +1,8 @@
 import { FLAG_SHORT, fmtDate, fmtNum, fmtRange } from "../lib/format";
+import { RangeRuler } from "./RangeRuler";
 import { labName, pointKey, type Series } from "../lib/series";
 
-const FLAG_SYMBOL = { above: "▲", below: "▼", in_range: "●", no_range: "○" } as const;
+const FLAG_SYMBOL = { above: "▲", below: "▼", in_range: "✓", no_range: "–" } as const;
 
 /** Os mesmos dados do grafico em lista de cartoes (um por resultado): acessivel e cabe no celular. */
 export function DataTable({ series, onOpen }: { series: Series; onOpen?: (key: string) => void }) {
@@ -22,6 +23,7 @@ export function DataTable({ series, onOpen }: { series: Series; onOpen?: (key: s
               <span className="rc-value">
                 {fmtNum(p.value)} <small>{series.unit}</small>
               </span>
+              <RangeRuler value={p.value} low={p.ref_low} high={p.ref_high} flag={p.flag} />
               <span className="rc-sub">
                 {labName(p)} · no laudo: {fmtNum(p.raw_value)} {p.raw_unit} · faixa do laudo: {fmtRange(p.raw_ref_low, p.raw_ref_high, p.raw_unit) ?? "não informada"}
               </span>
