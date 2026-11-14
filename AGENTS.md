@@ -3,3 +3,4 @@
 - Screen components follow the component contract (Login, Dashboard, BiomarkerList, SeriesChart, PointDetail, RangeRuler, DataTable, Timeline, AlertsPanel, WearablesPanel, PrivacyView, PatientList, ReviewForm, UploadPanel): purely visual, no fetch or server state; data/API logic lives in containers (Root, UploadFlow) — keeps the port mechanical.
 - Approved safety messages are centralized in the browser-safe safetyCopy module; screens reuse it to prevent wording drift.
 - Phase 0 visual primitives live in `components/ui.tsx` and `AppShell.tsx`; `/guia-de-estilo` is gated in `main.tsx` with the application root lazy-loaded so the guide never loads backend code.
+- Login uses the shared Brand, Button and Input primitives, with scoped styles and callback-only authentication; this preserves the visual screen contract without changing account infrastructure.

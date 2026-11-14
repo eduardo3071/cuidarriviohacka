@@ -1,0 +1,32 @@
+/* Fase 1 — usa somente os tokens aprovados da fundação visual. */
+.login-phase-one {
+  place-items: start center;
+  padding: max(32px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+}
+.login-layout { width: 100%; max-width: 1040px; display: grid; gap: 32px; }
+.login-intro { min-width: 0; display: grid; gap: 24px; }
+.login-intro .brand-name { letter-spacing: 0; }
+.login-intro h1 { max-width: 21ch; font-size: 28px; line-height: 1.25; letter-spacing: 0; }
+.login-benefits { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.login-benefits li { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: start; gap: 12px; color: var(--color-ink-2); font-size: 16px; line-height: 1.5; }
+.login-benefits svg { color: var(--color-brand); }
+.login-form { min-width: 0; display: grid; align-content: start; gap: 24px; }
+.login-form h2 { margin: 0; font-size: 22px; letter-spacing: 0; }
+.login-form .ds-field > label { font-size: 16px; }
+.login-submit { width: 100%; }
+.login-submit:disabled { opacity: 1; cursor: progress; }
+.login-demo { width: 100%; margin-top: -16px; line-height: 1.5; }
+.login-error { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; margin: 0; padding: 12px; color: var(--color-urgent); background: var(--color-urgent-bg); border-radius: var(--radius-control); font-size: 16px; }
+.login-error svg { margin-top: 2px; }
+.login-submit-busy > svg { animation: login-spin 900ms linear infinite; }
+@keyframes login-spin { to { transform: rotate(360deg); } }
+@media (min-width: 1024px) {
+  .login-phase-one { place-items: center; padding: 64px 48px; }
+  .login-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 64px; }
+  .login-intro { gap: 32px; }
+  .login-intro h1 { font-size: 36px; }
+  .login-benefits li { font-size: 17px; }
+  .login-form { border-left: 1px solid var(--color-line); padding: 32px 0 32px 48px; }
+  .login-form h2 { font-size: 26px; }
+}
+@media (prefers-reduced-motion: reduce) { .login-submit-busy > svg { animation: none; } }

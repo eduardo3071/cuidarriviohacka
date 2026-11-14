@@ -6,4 +6,10 @@
 - [x] Criar `/guia-de-estilo` com todos os exemplos solicitados e somente dados sintéticos.
 - [x] Verificar testes e o guia em 375 px e 1280 px; parar para aprovação visual.
 
-Aguardando aprovação do Edu antes de iniciar as telas.
+## Fase 1 — Login
+
+- [x] Refazer marca, frase de valor, benefícios e formulário usando a fundação visual.
+- [x] Preservar as props e o acesso existentes; conferir validação, carregamento, erros e demonstração.
+- [x] Verificar celular, desktop, tema escuro e testes, sem avançar para outras telas.
+
+118 testes passaram. Navegador: 360, 375, 390, 768 e 1280 px sem rolagem horizontal; validação, carregamento, erros simulados e demonstração conferidos. Acesso real e armazenamento de perfis não foram alterados nesta fase visual.
