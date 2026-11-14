@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { scaleLinear, scaleUtc } from "d3-scale";
 import { fmtDate, fmtNum, FLAG_LABEL } from "../lib/format";
 import { useWidth } from "../lib/useWidth";
@@ -23,12 +24,15 @@ export interface SeriesChartProps {
   selectedKey: string | null;
   onSelect: (key: string) => void;
   onOpen?: (key: string) => void;
+  /** Altura fixa (versão compacta, ex.: resumo do médico). */
+  height?: number;
 }
 
-export function SeriesChart({ series, labIndex, selectedKey, onSelect, onOpen }: SeriesChartProps) {
+export function SeriesChart({ series, labIndex, selectedKey, onSelect, onOpen, height }: SeriesChartProps) {
+  const titleId = useId();
   const { points, unit, biomarker } = series;
   const [figRef, W] = useWidth(DEFAULT_W, 280);
-  const H = heightFor(W);
+  const H = height ?? heightFor(W);
   const d = chartDomain(points);
   const x = scaleUtc().domain([new Date(d.xMin), new Date(d.xMax)]).range([M.left, W - M.right]);
   const y = scaleLinear().domain([d.yMin, d.yMax]).range([H - M.bottom, M.top]).nice(5);
@@ -42,8 +46,8 @@ export function SeriesChart({ series, labIndex, selectedKey, onSelect, onOpen }:
 
   return (
     <figure className="chart" ref={figRef}>
-      <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} role="img" aria-labelledby="chart-title" className="chart-svg">
-        <title id="chart-title">{label}</title>
+      <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} role="img" aria-labelledby={titleId} className="chart-svg">
+        <title id={titleId}>{label}</title>
         {y.ticks(5).map((t) => <g key={`y${t}`}><line className="grid" x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} /><text className="tick" x={M.left - 8} y={y(t)} textAnchor="end" dominantBaseline="middle">{fmtNum(t)}</text></g>)}
         {x.ticks(6).map((t) => <text key={`x${t.getTime()}`} className="tick" x={x(t)} y={H - M.bottom + 22} textAnchor="middle">{yearFmt.format(t)}</text>)}
         <text className="unit" x={M.left - 8} y={M.top - 20} textAnchor="end">{unit}</text>

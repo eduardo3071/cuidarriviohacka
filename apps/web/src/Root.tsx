@@ -1,3 +1,6 @@
+import { ChevronLeft, Eye } from "lucide-react";
+import { AppShell } from "./components/AppShell";
+import { DoctorSummary, ReadOnlyStrip } from "./components/DoctorSummary";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import App, { Dashboard } from "./App";
@@ -136,9 +139,9 @@ function DoctorHome({ rest, role, onSignOut }: { rest: Rest; role: Extract<Role,
   if (open) return <DoctorPatientView rest={rest} doctorId={role.doctorId} patient={open} onBack={() => setOpen(null)} onSignOut={onSignOut} />;
   if (!patients.data) return <Status error={patients.error}>Carregando…</Status>;
   return (
-    <div className="app">
+    <AppShell doctor current="pacientes" onGo={() => setOpen(null)} accountName={role.name} synthetic={config.synthetic} onSignOut={onSignOut} title="Meus pacientes">
       <PatientList patients={patients.data} onOpen={setOpen} />
-    </div>
+    </AppShell>
   );
 }
 
@@ -148,21 +151,24 @@ function DoctorPatientView({ rest, doctorId, patient, onBack, onSignOut }: { res
     await logAccess(rest, { doctorId, patientId: patient.id, categories: patient.categories });
     return loadHealthData(rest, { id: patient.id, name: patient.full_name }, config.synthetic);
   }, [rest, doctorId, patient.id]);
+  const [all, setAll] = useState(false);
   const banner = useMemo(
-    () => (
-      <div className="readonly-banner" role="note">
-        <button type="button" className="link" onClick={onBack}>
-          ← Voltar aos pacientes
-        </button>
-        <span>
-          {doctorReadOnlyCopy(patient.categories.map((c) => CATEGORY_LABEL[c]).join(", "))}
-        </span>
-      </div>
-    ),
-    [patient.categories, onBack],
+    () => <ReadOnlyStrip icon={<Eye size={20} strokeWidth={1.75} aria-hidden="true" />} text={doctorReadOnlyCopy(patient.categories.map((c) => CATEGORY_LABEL[c]).join(", "))} />,
+    [patient.categories],
   );
   if (!health.data) return <Status error={health.error}>Carregando…</Status>;
-  return <Dashboard data={health.data} banner={banner} readOnly availableCategories={patient.categories} onSignOut={onSignOut} />;
+  if (all)
+    return (
+      <Dashboard data={health.data} readOnly availableCategories={patient.categories} onSignOut={onSignOut}
+        banner={<>{banner}<button type="button" className="dr-back dr-back-all" onClick={() => setAll(false)}><ChevronLeft size={20} strokeWidth={1.75} aria-hidden="true" />Voltar ao resumo</button></>} />
+    );
+  return (
+    <AppShell doctor current="pacientes" onGo={onBack} accountName={health.data.patient.full_name} synthetic={health.data.synthetic} onSignOut={onSignOut} title="Meus pacientes">
+      {banner}
+      <DoctorSummary data={health.data} categories={patient.categories} onBack={onBack} onAll={() => setAll(true)} />
+    </AppShell>
+  );
+
 }
 
 // ------------------------------------------------------------------ raiz
@@ -187,9 +193,7 @@ function Authenticated({ client }: { client: SupabaseClient }) {
   return role.kind === "patient" ? (
     <PatientHome rest={rest} api={api} role={role} onDemo={() => setDemo(true)} onSignOut={() => void signOut()} />
   ) : (
-    <Shell who={role.name} subtitle="médico" onSignOut={() => void signOut()}>
-      <DoctorHome rest={rest} role={role} onSignOut={() => void signOut()} />
-    </Shell>
+    <DoctorHome rest={rest} role={role} onSignOut={() => void signOut()} />
   );
 }
 

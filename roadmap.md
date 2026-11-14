@@ -30,3 +30,8 @@
 - [x] Cartões de médicos com acesso, revogar com confirmação, registro de quem abriu, encerrados recolhíveis.
 - [x] Assistente de 4 passos (tela cheia no celular, embutido no computador).
 - [ ] Testar liberar e revogar com conta real.
+
+## Fase 5B — Médico (somente leitura)
+
+- [x] Meus pacientes em cartões; resumo clínico com faixa de somente leitura, 4 seções (acordeão no celular), seções bloqueadas e "Ver todos os exames".
+- [ ] Testar com conta real de médico.

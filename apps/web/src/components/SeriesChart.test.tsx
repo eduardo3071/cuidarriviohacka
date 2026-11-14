@@ -39,7 +39,7 @@ describe("SeriesChart", () => {
 
   it("e acessivel: imagem com titulo descritivo e pontos operaveis por teclado", () => {
     expect(html).toContain('role="img"');
-    expect(html).toMatch(/<title id="chart-title">Glicemia de jejum: 7 resultados de 3 laboratórios, de 10\/05\/2016 a 28\/09\/2026/);
+    expect(html).toMatch(/<title id="[^"]+">Glicemia de jejum: 7 resultados de 3 laboratórios, de 10\/05\/2016 a 28\/09\/2026/);
     expect(count(html, 'tabindex="0"')).toBe(7);
     expect(html).toContain('aria-label="21/08/2019, Lakeside Medical Centre: 99,09 mg/dL. dentro da faixa do laudo."');
   });
