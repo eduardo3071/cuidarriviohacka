@@ -149,6 +149,8 @@ vê é o **RLS**, não o código do front. O papel (paciente/médico) só escolh
 - **Enviar laudo** (só com `VITE_API_URL` e a API no ar): upload de PDF/foto → leitura em segundo plano → tela de **conferência** (cada
   valor editável, com a imagem do laudo e uma caixa marcando onde foi lido; resultados de baixa confiança vêm destacados) → *Guardar*.
   O front valida antes (data, números, faixa), e o servidor valida de novo. Reenviar o mesmo arquivo não duplica nada.
+- **Modo apresentação** (botão **Apresentar** na demonstração, ou `/apresentar`, ou `/apresentar?passo=N`): passo a passo guiado do pitch pelas telas, com o texto de fala de cada passo,
+  o gargalo que ele resolve e destaque do que está sendo explicado. Setas/espaço avançam, `Esc` sai. Dados sintéticos, sem login nem API (funciona offline). Detalhes em `docs/ROTEIRO_DEMO.md`.
 - Sem `VITE_SUPABASE_*` no `.env`, ou pelo botão “Ver demonstração”, o app roda em modo demonstração sem login.
 - O `.env` é lido da **raiz** (`envDir`); só variáveis `VITE_*` chegam ao navegador.
 

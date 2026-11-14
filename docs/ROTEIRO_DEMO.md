@@ -2,6 +2,42 @@
 
 Dados 100% sintéticos: paciente **Marta Albuquerque Lima**, médico **Dr. Henrique** (fictício).
 
+## Modo apresentação (botão "Apresentar")
+
+Um passo a passo guiado para o pitch do software, **sem login, sem banco e sem API** (dados sintéticos, funciona offline). É o plano B natural do roteiro abaixo e também um bom guia de ensaio.
+
+**Como abrir:** em **Ver demonstração**, clique em **Apresentar** (na barra superior; no celular é só o ícone ▶). Ou abra direto `http://localhost:5173/apresentar`
+(para ensaiar um trecho: `/apresentar?passo=6`). Offline: `python scripts/dev.py --offline`.
+
+**Como conduzir:** o painel diz **o que falar** em cada passo e **qual gargalo da Rivio ele resolve**; a tela mostra a parte certa e destaca em âmbar o que você está explicando.
+| Tecla | Faz |
+|---|---|
+| `→`, `Espaço`, `PageDown` | próximo passo |
+| `←`, `PageUp` | voltar |
+| `Home` / `End` | primeiro / último passo |
+| `Esc` | sair da apresentação |
+
+No painel: **Próximo/Voltar**, ⇄ para mover o painel de lado (no computador ele já escolhe sozinho o canto que menos cobre o destaque), ⌄ para recolher e ✕ para sair.
+
+| # | Passo (caminho da Marta) | Tela | Tempo |
+|---|---|---|---|
+| 1 | Uma paciente, vários laboratórios | Início | 30 s |
+| 2 | Cada valor contra a faixa do próprio laudo | Início | 40 s |
+| 3 | O papel vira dado, com a confirmação dela | Enviar laudo | 45 s |
+| 4 | O mesmo exame, vários laboratórios, uma série só | Exames | 45 s |
+| 5 | Tudo na mesma linha do tempo | Linha do tempo | 25 s |
+| 6 | Alertas que orientam, sem diagnosticar | Alertas | 40 s |
+| 7 | Ela decide quem vê, o quê e por quanto tempo | Privacidade | 40 s |
+| 8 | O médico vê só quem liberou | Médico | 25 s |
+| 9 | Um resumo clínico, somente leitura | Médico | 40 s |
+| 10 | O que está pronto e o que vem a seguir | Início | 30 s |
+
+Total sugerido: **6 min** (cabe na parte de software de um pitch de 10 min). Os números das falas (resultados, laboratórios, amostras, alertas) vêm dos dados, não são digitados à mão,
+e o passo 10 é honesto sobre os limites (foto/OCR e IA hospedada sem teste real, regras de alerta sem revisão clínica, relógio ainda sem tempo real).
+
+**Limites do modo:** é uma demonstração com dados sintéticos e botões que não gravam nada (o envio de laudo e a liberação de acesso aparecem como telas, mas só o roteiro ao vivo abaixo exercita o banco de verdade).
+No celular o painel cobre parte da tela; recolha com ⌄ para ver tudo.
+
 ## Antes de subir ao palco (15 min antes)
 
 1. `python scripts/dev.py` roda o pré-voo e sobe API e front. Leia os avisos: dizem o que cai no plano B.

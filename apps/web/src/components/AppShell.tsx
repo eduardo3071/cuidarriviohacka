@@ -1,5 +1,6 @@
-import { HeartPulse, LogOut, UserRound, Users } from "lucide-react";
+import { HeartPulse, LogOut, Play, UserRound, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import "../pitch/pitch.css";
 import { SAFETY_COPY } from "../lib/safetyCopy";
 import { BottomNav, NAV_ITEMS, type Section } from "./BottomNav";
 import { Toast } from "./ui";
@@ -27,6 +28,7 @@ export function AppShell({
   doctor = false,
   banner,
   title = "Início",
+  onPresent,
 }: {
   children: ReactNode;
   current: Section | "pacientes";
@@ -39,6 +41,8 @@ export function AppShell({
   doctor?: boolean;
   banner?: ReactNode;
   title?: string;
+  /** Se informado, mostra o botão "Apresentar" (modo apresentação guiada do pitch). */
+  onPresent?: () => void;
 }) {
   const [notice, setNotice] = useState(false);
   const signOut = () => onSignOut ? onSignOut() : setNotice(true);
@@ -70,6 +74,11 @@ export function AppShell({
           <Brand />
           <h1 className="app-topbar-title">{doctor ? "Meus pacientes" : title}</h1>
           {synthetic && <span className="badge-synth" aria-hidden="true">{SAFETY_COPY.synthetic}</span>}
+          {onPresent && (
+            <button type="button" className="present-btn" onClick={onPresent} aria-label="Iniciar a apresentação guiada">
+              <Play size={20} strokeWidth={1.75} aria-hidden="true" /><span className="present-label">Apresentar</span>
+            </button>
+          )}
           <details className="account-menu">
             <summary aria-label={`Menu da conta de ${accountName}`}>
               <UserRound size={20} strokeWidth={1.75} aria-hidden="true" />

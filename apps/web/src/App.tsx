@@ -24,6 +24,7 @@ import { attentionCount } from "./lib/wearables";
 import type { EventKind, HealthData } from "./types";
 import type { Category } from "./data/api";
 import { SAFETY_COPY } from "./lib/safetyCopy";
+import { PitchTour } from "./pitch/PitchTour";
 
 /** Exame aberto por padrao na demonstracao (a historia: tres laboratorios, unidades diferentes). */
 export const DEFAULT_BIOMARKER = "Glicemia de jejum";
@@ -34,6 +35,7 @@ type ExamTab = "resultados" | "linha";
 export default function App({ source = demoSource }: { source?: DataSource }) {
   const [data, setData] = useState<HealthData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [presenting, setPresenting] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -60,7 +62,8 @@ export default function App({ source = demoSource }: { source?: DataSource }) {
         <ScreenSkeleton />
       </main>
     );
-  return <Dashboard data={data} />;
+  if (presenting) return <PitchTour onExit={() => setPresenting(false)} />;
+  return <Dashboard data={data} onPresent={() => setPresenting(true)} />;
 }
 
 export interface DashboardProps {
@@ -82,9 +85,11 @@ export interface DashboardProps {
   onDemo?: () => void;
   /** Primeiro acesso: sair da conta. */
   onSignOut?: () => void;
+  /** Modo demonstração: mostra o botão "Apresentar" (pitch guiado). */
+  onPresent?: () => void;
 }
 
-export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy, onDemo, onSignOut }: DashboardProps) {
+export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy, onDemo, onSignOut, onPresent }: DashboardProps) {
   const [view, setView] = useState<View>(initialView);
   const [examTab, setExamTab] = useState<ExamTab>(initialExamTab);
   const [detailOpen, setDetailOpen] = useState(initialView === "exames");
@@ -101,7 +106,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
 
   if (series.length === 0 && data.wearables.length === 0 && !readOnly)
     return (
-      <AppShell current={view} onGo={(s) => s !== "pacientes" && setView(s)} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner}
+      <AppShell current={view} onGo={(s) => s !== "pacientes" && setView(s)} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner} onPresent={onPresent}
         title={view === "enviar" ? "Enviar laudo" : view === "acessos" ? "Privacidade e acessos" : view === "alertas" ? "Alertas" : view === "exames" ? "Exames" : "Início"}>
         {view === "enviar" ? (uploadNode ?? <main className="screen panel"><h2>Enviar laudo</h2><p>Na demonstração não é possível enviar laudos.</p></main>)
           : view === "acessos" && privacy ? privacy
@@ -161,7 +166,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
   );
 
   return (
-    <AppShell current={shown} onGo={(s) => s !== "pacientes" && go(s)} items={items} alertCount={nAttention} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner} title={titles[shown]}>
+    <AppShell current={shown} onGo={(s) => s !== "pacientes" && go(s)} items={items} alertCount={nAttention} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner} onPresent={onPresent} title={titles[shown]}>
       <ConnectionNotice />
 
       {shown === "inicio" && current && sectionAvailable && (
