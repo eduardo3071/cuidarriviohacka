@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { StyleGuide } from "./style-guide/StyleGuide";
 import "./styles.css";
 import "./foundation.css";
+import "./visual-map.css";
 
 const Root = lazy(() => import("./Root"));
 const styleGuide = window.location.pathname.replace(/\/$/, "") === "/guia-de-estilo";

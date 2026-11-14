@@ -15,7 +15,7 @@ export function RangeRuler({ value, low, high, unit, flag }: { value: number; lo
     const max = Math.max(hi + span * 0.5, value);
     const pct = (v: number) => ((v - min) / (max - min || 1)) * 100;
     band = [low != null ? pct(low) : 0, high != null ? pct(high) : 100];
-    pos = Math.min(98, Math.max(2, pct(value)));
+    pos = Math.min(96, Math.max(4, pct(value)));
   }
   return (
     <span className={`ruler state-${flag}`}>

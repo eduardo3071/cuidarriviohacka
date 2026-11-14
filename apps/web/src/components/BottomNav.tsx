@@ -35,7 +35,7 @@ export function BottomNav({
                 aria-current={current === i.id ? "page" : undefined}
                 onClick={() => onGo(i.id)}
               >
-                <span className="bn-icon" aria-hidden="true"><Icon size={24} strokeWidth={1.75} /></span>
+                <span className="bn-icon" aria-hidden="true"><Icon size={22} strokeWidth={1.75} /></span>
                 <span className="bn-label">{i.label}</span>
                 {i.id === "alertas" && alertCount > 0 && (
                   <span className="bn-count" aria-label={`${alertCount} ${alertCount === 1 ? "alerta" : "alertas"} para atenção`}>

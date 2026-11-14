@@ -32,7 +32,7 @@ export function Button({
   type = "button",
   children,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "danger" | "link"; icon?: LucideIcon }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "danger" | "danger-solid" | "link"; icon?: LucideIcon }) {
   return (
     <button type={type} className={cx("ds-button", `ds-button-${variant}`, className)} {...props}>
       {Icon && <Icon size={20} strokeWidth={1.75} aria-hidden="true" />}
