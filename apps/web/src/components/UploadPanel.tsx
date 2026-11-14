@@ -1,148 +1,144 @@
-import { useRef, useState, type DragEvent } from "react";
-import {
-  confirmDocument,
-  getReview,
-  uploadDocument,
-  waitForJob,
-  type ApiFetch,
-  type ConfirmResult,
-  type Review,
-} from "../data/documents";
-import { ApiError } from "../data/rest";
-import { buildConfirm, toDraft, type Draft } from "../lib/review";
-import { ReviewForm } from "./ReviewForm";
+import { Camera, Check, Lightbulb, Upload } from "lucide-react";
+import { useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
+import type { ConfirmResult } from "../data/documents";
+import { SAFETY_COPY } from "../lib/safetyCopy";
+import { UploadSteps } from "./UploadSteps";
+import { Button, ErrorState, StateBadge } from "./ui";
+import "./upload.css";
 
-type Step =
-  | { k: "idle" }
-  | { k: "working"; label: string }
-  | { k: "review"; review: Review; draft: Draft; errors: string[]; rowErrors: Record<number, string>; saving: boolean }
-  | { k: "done"; result: ConfirmResult | null; duplicate: boolean }
-  | { k: "error"; message: string };
+export type UploadStep = "idle" | "working" | "review" | "done" | "error";
 
-const msg = (e: unknown) => (e instanceof ApiError ? e.message : "Algo deu errado. Tente de novo.");
+export interface UploadPanelProps {
+  step: UploadStep;
+  onFile: (file: File) => void;
+  onReset: () => void;
+  workingLabel?: string;
+  errorMessage?: string;
+  result?: ConfirmResult | null;
+  duplicate?: boolean;
+  /** Conteúdo da etapa "review" (o ReviewForm). */
+  review?: ReactNode;
+  /** Leva para a aba Exames depois de guardar. */
+  onViewExams?: () => void;
+  /** Só para a vitrine /celular: abre direto a prévia de uma foto. */
+  initialPhoto?: string;
+}
 
-/** Enviar laudo -> a API le em segundo plano -> a pessoa confere -> vai para o historico. */
-export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: () => void }) {
-  const [step, setStep] = useState<Step>({ k: "idle" });
-  const input = useRef<HTMLInputElement>(null);
+const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,.pdf,.jpg,.jpeg,.png,.webp";
+const FORMATS = "PDF, JPEG, PNG ou WebP, até 15 MB";
+const STEP_INDEX: Record<UploadStep, number> = { idle: 0, error: 0, working: 1, review: 2, done: 3 };
+
+/** Enviar laudo (puramente visual): escolher arquivo -> lendo -> conferir -> guardado. */
+export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage, result, duplicate, review, onViewExams, initialPhoto }: UploadPanelProps) {
+  const file = useRef<HTMLInputElement>(null);
+  const camera = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
-
-  async function handleFile(file: File) {
-    try {
-      setStep({ k: "working", label: "Enviando o laudo…" });
-      const up = await uploadDocument(api, file);
-      if (up.duplicate && up.status === "confirmed") return setStep({ k: "done", result: null, duplicate: true });
-      setStep({ k: "working", label: "Lendo o laudo… isso pode levar alguns segundos." });
-      await waitForJob(api, up.jobId);
-      const review = await getReview(api, up.documentId);
-      if (review.observations.length === 0)
-        return setStep({ k: "error", message: "Não encontrei resultados de exame neste arquivo. Confira se é um laudo legível e tente outro." });
-      setStep({ k: "review", review, draft: toDraft(review), errors: [], rowErrors: {}, saving: false });
-    } catch (e) {
-      setStep({ k: "error", message: msg(e) });
-    }
-  }
-
-  async function confirm() {
-    if (step.k !== "review") return;
-    const built = buildConfirm(step.draft);
-    if (!built.ok) return setStep({ ...step, errors: built.errors, rowErrors: built.rowErrors });
-    setStep({ ...step, saving: true, errors: [], rowErrors: {} });
-    try {
-      const result = await confirmDocument(api, step.review.document_id, built.payload);
-      setStep({ k: "done", result, duplicate: false });
-      onConfirmed();
-    } catch (e) {
-      setStep({ ...step, saving: false, errors: [msg(e)], rowErrors: {} });
-    }
-  }
-
-  const pick = (files: FileList | null) => {
-    const f = files?.[0];
-    if (f) void handleFile(f);
-    if (input.current) input.current.value = ""; // permite escolher o mesmo arquivo de novo
+  // foto da câmera: primeiro a prévia, depois "Usar esta foto" ou "Tirar outra"
+  const [photo, setPhoto] = useState<{ file: File | null; url: string } | null>(initialPhoto ? { file: null, url: initialPhoto } : null);
+  useEffect(() => () => { if (photo?.file) URL.revokeObjectURL(photo.url); }, [photo]);
+  const shoot = (input: HTMLInputElement | null) => {
+    const f = input?.files?.[0];
+    if (f) setPhoto({ file: f, url: URL.createObjectURL(f) });
+    if (input) input.value = "";
+  };
+  const usePhoto = () => { if (photo?.file) onFile(photo.file); setPhoto(null); };
+  const pick = (input: HTMLInputElement | null) => {
+    const f = input?.files?.[0];
+    if (f) onFile(f);
+    if (input) input.value = ""; // permite escolher o mesmo arquivo de novo
   };
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
     setOver(false);
-    pick(e.dataTransfer.files);
+    const f = e.dataTransfer.files?.[0];
+    if (f) onFile(f);
   };
-  const reset = () => setStep({ k: "idle" });
-
-  if (step.k === "review")
-    return (
-      <div className="app">
-        <ReviewForm
-          review={step.review}
-          draft={step.draft}
-          onChange={(draft) => setStep({ ...step, draft })}
-          errors={step.errors}
-          rowErrors={step.rowErrors}
-          busy={step.saving}
-          onConfirm={() => void confirm()}
-          onCancel={reset}
-        />
-      </div>
-    );
+  const repeated = duplicate || result?.already;
+  const n = result?.confirmed ?? 0;
 
   return (
-    <div className="app">
-      <section className="panel upload">
-        <h2>Enviar laudo</h2>
-        <p className="muted">
-          Envie um PDF ou uma foto do laudo. O sistema lê os resultados e mostra para você conferir antes de guardar. O que você guardar aparece no seu
-          histórico, com a faixa de referência do próprio laudo.
-        </p>
+    <main className="screen up-screen">
+      <h2 className="page-title">Enviar laudo</h2>
+      <UploadSteps current={STEP_INDEX[step]} />
 
-        {step.k === "working" && (
-          <p role="status" className="working">
-            {step.label}
-          </p>
-        )}
-        {step.k === "error" && (
-          <div role="alert" className="form-error">
-            <p>{step.message}</p>
-            <button type="button" className="link" onClick={reset}>
-              Tentar de novo
-            </button>
-          </div>
-        )}
-        {step.k === "done" && (
-          <div role="status" className="done">
-            <p>
-              <strong>
-                {step.duplicate
-                  ? "Este laudo já foi enviado e guardado antes. Nada foi duplicado."
-                  : step.result?.already
-                    ? "Este laudo já estava guardado. Nada mudou."
-                    : `${step.result?.confirmed ?? 0} ${step.result?.confirmed === 1 ? "resultado guardado" : "resultados guardados"} no seu histórico.`}
-              </strong>
-            </p>
-            {step.result && step.result.submitted > step.result.confirmed && (
-              <p className="muted">{step.result.submitted - step.result.confirmed} repetido(s) neste laudo foram ignorados.</p>
-            )}
-            <button type="button" className="primary" onClick={reset}>
-              Enviar outro laudo
-            </button>
-          </div>
-        )}
+      {step === "review" && review}
 
-        {(step.k === "idle" || step.k === "error") && (
-          <label
-            className={`dropzone${over ? " over" : ""}`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setOver(true);
-            }}
+      {(step === "idle" || step === "error") && photo && (
+        <div className="up-photo">
+          <h3 className="sec-title">Confira a foto</h3>
+          <img src={photo.url} alt="Prévia da foto do laudo" className="up-photo-img" />
+          <p className="caption">Veja se a página inteira aparece e se dá para ler os números.</p>
+          <div className="up-photo-actions">
+            <Button className="up-big" icon={Check} onClick={usePhoto}>Usar esta foto</Button>
+            <Button className="up-big" variant="secondary" icon={Camera} onClick={() => camera.current?.click()}>Tirar outra</Button>
+          </div>
+        </div>
+      )}
+      {(step === "idle" || step === "error") && (
+        <input ref={camera} className="sr-only" tabIndex={-1} aria-hidden="true" type="file" accept="image/*" capture="environment" onChange={(e) => shoot(e.currentTarget)} />
+      )}
+
+      {(step === "idle" || step === "error") && !photo && (
+        <div className="up-pick">
+          <p className="up-lead">{SAFETY_COPY.upload}</p>
+          {step === "error" && (
+            <ErrorState title={errorMessage ?? "Não foi possível ler o laudo."} description="Confira o arquivo ou a internet e tente de novo." onRetry={onReset} />
+          )}
+          <div className="up-mobile">
+            <Button className="up-big" icon={Camera} onClick={() => camera.current?.click()}>Fotografar o laudo</Button>
+            <Button className="up-big" variant="secondary" onClick={() => file.current?.click()}>Escolher arquivo (PDF ou imagem)</Button>
+            <p className="caption up-center">{FORMATS}</p>
+          </div>
+          <div
+            className={`up-drop${over ? " is-over" : ""}`}
+            onDragOver={(e) => { e.preventDefault(); setOver(true); }}
             onDragLeave={() => setOver(false)}
             onDrop={onDrop}
+            onClick={(e) => { if (e.target === e.currentTarget) file.current?.click(); }}
           >
-            <span>Arraste o arquivo aqui ou clique para escolher</span>
-            <span className="muted">PDF, JPEG, PNG ou WebP, até 15 MB</span>
-            <input ref={input} type="file" accept="application/pdf,image/jpeg,image/png,image/webp,.pdf,.jpg,.jpeg,.png,.webp" onChange={(e) => pick(e.target.files)} />
-          </label>
-        )}
-      </section>
-    </div>
+            <Upload size={40} strokeWidth={1.75} aria-hidden="true" />
+            <p className="up-drop-title">Arraste o arquivo aqui ou clique para escolher</p>
+            <p className="caption">{FORMATS}</p>
+            <Button variant="secondary" onClick={() => file.current?.click()}>Escolher arquivo</Button>
+          </div>
+          <div className="up-tip">
+            <Lightbulb size={20} strokeWidth={1.75} aria-hidden="true" />
+            <p>Dica de foto: boa luz, a página inteira, sem sombra.</p>
+          </div>
+          <input ref={file} className="sr-only" tabIndex={-1} aria-hidden="true" type="file" accept={ACCEPT} onChange={(e) => pick(e.currentTarget)} />
+        </div>
+      )}
+
+      {step === "working" && (
+        <div className="up-reading">
+          <span className="up-spinner" aria-hidden="true" />
+          <p role="status" className="up-reading-title">{workingLabel}</p>
+          <div className="up-skel" aria-hidden="true"><span /><span /><span /></div>
+          <Button variant="link" onClick={onReset}>Cancelar</Button>
+        </div>
+      )}
+
+      {step === "done" && (
+        repeated ? (
+          <div role="status" className="ds-card up-done">
+            <StateBadge state="info" label="Já enviado" />
+            <p>{SAFETY_COPY.duplicate}</p>
+            {onViewExams && <Button variant="secondary" onClick={onViewExams}>Ver nos meus exames</Button>}
+            <Button variant="link" onClick={onReset}>Enviar outro</Button>
+          </div>
+        ) : (
+          <div role="status" className="ds-card up-done">
+            <span className="up-ok"><Check size={32} strokeWidth={2} aria-hidden="true" /></span>
+            <h3 className="sec-title">{n} {n === 1 ? "resultado guardado" : "resultados guardados"}</h3>
+            <p className="caption">
+              Já estão no seu histórico, com a faixa impressa no próprio laudo.
+              {result && result.submitted > result.confirmed && ` ${result.submitted - result.confirmed} repetido(s) neste laudo foram ignorados.`}
+            </p>
+            {onViewExams && <Button onClick={onViewExams}>Ver nos meus exames</Button>}
+            <Button variant="link" onClick={onReset}>Enviar outro</Button>
+          </div>
+        )
+      )}
+    </main>
   );
 }

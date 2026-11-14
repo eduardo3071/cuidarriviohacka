@@ -24,6 +24,15 @@ describe("mensagens de login", () => {
     expect(validateLogin("a@b.co", "")).toMatch(/senha/);
     expect(validateLogin(" a@b.co ", "x")).toBeNull();
   });
+  it("rejeita e-mail vazio sem enviar credenciais", () => {
+    expect(validateLogin("", "senha")).not.toBeNull();
+  });
+  it("rejeita e-mail com espaços internos", () => {
+    expect(validateLogin("nome sobrenome@exemplo.com", "senha")).not.toBeNull();
+  });
+  it("aceita e-mail válido com senha preenchida", () => {
+    expect(validateLogin("marta@exemplo.com", "senha")).toBeNull();
+  });
 });
 
 describe("Login", () => {

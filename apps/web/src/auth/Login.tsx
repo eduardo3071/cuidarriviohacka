@@ -1,5 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
+import { CircleAlert, FileText, LoaderCircle, Ruler, ShieldCheck } from "lucide-react";
+import { Brand } from "../components/AppShell";
+import { Button, Input } from "../components/ui";
+import { SAFETY_COPY } from "../lib/safetyCopy";
 import { loginErrorMessage, validateLogin } from "./messages";
+import "./login.css";
 
 export interface LoginProps {
   onSubmit: (email: string, password: string) => Promise<{ message?: string; status?: number; code?: string } | null>;
@@ -13,11 +18,20 @@ export function Login({ onSubmit, onDemo, initialError = null }: LoginProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(initialError);
   const [busy, setBusy] = useState(false);
+  const [invalidField, setInvalidField] = useState<"email" | "password" | null>(null);
+  const submitting = useRef(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (submitting.current) return;
     const invalid = validateLogin(email, password);
-    if (invalid) return setError(invalid);
+    if (invalid) {
+      setInvalidField(validateLogin(email, "x") ? "email" : "password");
+      setError(invalid);
+      return;
+    }
+    submitting.current = true;
+    setInvalidField(null);
     setBusy(true);
     setError(null);
     try {
@@ -26,42 +40,57 @@ export function Login({ onSubmit, onDemo, initialError = null }: LoginProps) {
     } catch (x) {
       setError(loginErrorMessage(x as Error));
     } finally {
+      submitting.current = false;
       setBusy(false);
     }
   }
 
   return (
-    <main className="login">
-      <form className="panel login-card" onSubmit={submit} noValidate aria-labelledby="login-title">
-        <h1 id="login-title">Hub de Saúde</h1>
-        <p className="muted">Entre para ver o seu histórico ou os pacientes que liberaram o acesso a você.</p>
-
-        <label htmlFor="email">E-mail</label>
-        <input id="email" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-        <label htmlFor="password">Senha</label>
-        <input
+    <main className="login login-phase-one">
+      <div className="login-layout">
+        <section className="login-intro" aria-labelledby="login-value">
+          <Brand />
+          <h1 id="login-value">Seu histórico de saúde, organizado e só seu</h1>
+          <ul className="login-benefits">
+            <li><FileText size={20} strokeWidth={1.75} aria-hidden="true" /><span>Organiza exames de papel e PDF</span></li>
+            <li><Ruler size={20} strokeWidth={1.75} aria-hidden="true" /><span>Mostra cada resultado contra a faixa do próprio laudo</span></li>
+            <li><ShieldCheck size={20} strokeWidth={1.75} aria-hidden="true" /><span>Você decide quem pode ver</span></li>
+          </ul>
+          <span className="login-seal">{SAFETY_COPY.synthetic}</span>
+        </section>
+        <div className="login-side">
+        <form className="login-form" onSubmit={submit} noValidate aria-labelledby="login-title" aria-busy={busy}>
+          <h2 id="login-title">Entre na sua conta</h2>
+          <Input label="E-mail" id="email" type="email" inputMode="email" autoCapitalize="none" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} disabled={busy} error={invalidField === "email" ? error ?? undefined : undefined} required />
+          <Input
+          label="Senha"
           id="password"
           type="password"
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={busy}
+          error={invalidField === "password" ? error ?? undefined : undefined}
           required
         />
 
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
+        <div className="login-error-slot">
+          {error && !invalidField && (
+            <p className="login-error" role="alert">
+              <CircleAlert size={20} strokeWidth={1.75} aria-hidden="true" /><span>{error}</span>
+            </p>
+          )}
+        </div>
 
-        <button type="submit" className="primary" disabled={busy}>
+        <Button type="submit" disabled={busy} icon={busy ? LoaderCircle : undefined} className={busy ? "login-submit login-submit-busy" : "login-submit"}>
           {busy ? "Entrando…" : "Entrar"}
-        </button>
-        <button type="button" className="link" onClick={onDemo}>
-          Ver demonstração com dados sintéticos
-        </button>
+        </Button>
       </form>
+        <Button variant="link" onClick={onDemo} disabled={busy} className="login-demo">
+          Ver demonstração com dados sintéticos
+        </Button>
+        </div>
+      </div>
     </main>
   );
 }

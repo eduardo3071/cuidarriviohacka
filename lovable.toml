@@ -1,0 +1,5 @@
+[run]
+install = "bash .lovable/run.sh install"
+dev = "bash .lovable/run.sh dev"
+build = "bash .lovable/run.sh build"
+"build:dev" = "bash .lovable/run.sh build:dev"

@@ -1,7 +1,9 @@
+import { SAFETY_COPY } from "../lib/safetyCopy";
+
 /** Mensagem de login em portugues. Nao diz se foi o e-mail ou a senha que errou (nao confirma que uma conta existe). */
 export function loginErrorMessage(err: { message?: string; status?: number; code?: string } | null | undefined): string {
   const msg = (err?.message ?? "").toLowerCase();
-  if (err?.code === "invalid_credentials" || msg.includes("invalid login credentials")) return "E-mail ou senha incorretos.";
+  if (err?.code === "invalid_credentials" || msg.includes("invalid login credentials")) return SAFETY_COPY.loginError;
   if (err?.code === "over_request_rate_limit" || err?.status === 429 || msg.includes("rate limit"))
     return "Muitas tentativas. Aguarde um minuto e tente de novo.";
   if (msg.includes("email not confirmed")) return "Este e-mail ainda não foi confirmado.";

@@ -16,21 +16,23 @@ describe("AlertsPanel", () => {
   });
 
   it("a gravidade aparece em TEXTO e forma, nao so em cor", () => {
-    expect(html).toContain("▲</span> Atenção");
-    expect(html).toContain("●</span> Informativo");
+    expect(html).toContain("lucide-triangle-alert");
+    expect(html).toContain("<span>Atenção</span>");
+    expect(html).toContain("<span>Informação</span>");
   });
 
-  it("cada alerta tem 'Por que disparou?' com regra, observado e janela", () => {
-    expect(count(html, "Por que disparou?")).toBe(5);
-    expect(count(html, "<dt>Regra</dt>")).toBe(5);
-    expect(count(html, "<dt>Observado</dt>")).toBe(5);
-    expect(count(html, "<dt>Janela analisada</dt>")).toBe(5);
-    expect(html).toContain("4 avisos entre 30/10 e 09/11");
-    expect(html).toContain("2 ou mais avisos de ritmo irregular do relógio em 14 dias");
+  it("cada alerta tem 'Ver por quê' e o painel mostra regra, valor observado e janela", () => {
+    expect(count(html, "Ver por quê")).toBe(10);
+    expect(html).toContain("<dt>Regra</dt>");
+    expect(html).toContain("<dt>Valor observado</dt>");
+    expect(html).toContain("<dt>Janela</dt>");
+    expect(html).toContain("Converse com um médico");
+    expect(html).toContain("Este alerta orienta; não faz diagnóstico.");
   });
 
   it("deixa claro que a deteccao de ritmo e do relogio, nao do painel", () => {
-    expect(html).toContain("O aviso é uma detecção do próprio relógio");
+    const rhythm = alerts.filter((a) => a.evidence.series[0]?.metric === "irregular_rhythm_event");
+    expect(renderToStaticMarkup(<AlertsPanel alerts={rhythm} />)).toContain("O aviso é uma detecção do próprio relógio");
   });
 
   it("toda mensagem orienta um medico e diz que nao e diagnostico", () => {
