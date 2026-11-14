@@ -24,7 +24,7 @@ describe("Dashboard (demonstracao)", () => {
   });
 
   it("o resultado selecionado por padrao e o mais recente, com laudo e normalizado lado a lado", () => {
-    expect(html).toContain("Acima da faixa do laudo");
+    expect(html).toContain("acima da faixa do laudo");
     expect(html).toContain("28/09/2026");
     expect(html).toContain("Diagnosticos Vita");
   });

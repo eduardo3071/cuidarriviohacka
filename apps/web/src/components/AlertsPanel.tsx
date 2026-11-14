@@ -1,4 +1,5 @@
 import { fmtDate } from "../lib/format";
+import { SAFETY_COPY } from "../lib/safetyCopy";
 import { evidenceChartOptions, SEVERITY_LABEL, SEVERITY_SYMBOL, sortAlerts } from "../lib/wearables";
 import type { Alert } from "../types";
 import { MiniChart } from "./MiniChart";
@@ -27,6 +28,7 @@ export function AlertsPanel({ alerts }: { alerts: Alert[] }) {
               <time dateTime={a.triggered_at}>{fmtDate(a.triggered_at.slice(0, 10))}</time>
             </header>
             <p className="alert-msg">{a.message}</p>
+            <p className="alert-action">{SAFETY_COPY.alertsAction}</p>
             <details className="why">
               <summary>Por que disparou?</summary>
               <dl>

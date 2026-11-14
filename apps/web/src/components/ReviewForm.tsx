@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Review } from "../data/documents";
 import { needsAttention, type Draft, type DraftRow } from "../lib/review";
+import { SAFETY_COPY } from "../lib/safetyCopy";
 
 const METHOD_LABEL: Record<string, string> = { text_layer: "texto do PDF", ocr: "leitura da imagem (OCR)", llm: "IA", manual: "editado por você" };
 
@@ -30,7 +31,7 @@ export function ReviewForm({ review, draft, onChange, errors, rowErrors, busy, o
       <section className="panel">
         <h2>Confira o que foi lido</h2>
         <p className="muted">
-          Leitura feita por {METHOD_LABEL[review.method] ?? review.method}. Nada vai para o seu histórico até você confirmar. Corrija o que estiver
+          Leitura feita por {METHOD_LABEL[review.method] ?? review.method}. {SAFETY_COPY.upload} Corrija o que estiver
           diferente do papel e desmarque o que não quiser guardar.
         </p>
         {attention > 0 && (

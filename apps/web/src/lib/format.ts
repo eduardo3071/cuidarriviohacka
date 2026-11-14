@@ -1,4 +1,5 @@
 import type { Flag } from "../types";
+import { RANGE_LABEL } from "./safetyCopy";
 
 const nf = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
 
@@ -19,19 +20,9 @@ export function fmtRange(low: number | null, high: number | null, unit: string |
   return null;
 }
 
-export const FLAG_LABEL: Record<Flag, string> = {
-  in_range: "Dentro da faixa do laudo",
-  above: "Acima da faixa do laudo",
-  below: "Abaixo da faixa do laudo",
-  no_range: "Laudo sem faixa de referência",
-};
+export const FLAG_LABEL: Record<Flag, string> = RANGE_LABEL;
 
-export const FLAG_SHORT: Record<Flag, string> = {
-  in_range: "na faixa",
-  above: "acima",
-  below: "abaixo",
-  no_range: "sem faixa",
-};
+export const FLAG_SHORT: Record<Flag, string> = RANGE_LABEL;
 
 /** As categorias da ontologia estao sem acento; aqui ficam bonitas. */
 const CATEGORY_LABEL: Record<string, string> = {

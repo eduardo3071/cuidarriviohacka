@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Sheet } from "./Sheet";
+import { SAFETY_COPY } from "../lib/safetyCopy";
 import { CATEGORIES, CATEGORY_LABEL, consentStatus, type AccessEntry, type Category, type Consent, type Doctor } from "../data/api";
 
 const DAYS = [
@@ -173,10 +174,8 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
       <Sheet open={!!toRevoke} title="Revogar acesso?" onClose={() => setToRevoke(null)}>
         {toRevoke && (
           <div className="confirm">
-            <p>
-              <strong>{doctorName(toRevoke.doctor_id)}</strong> deixará de ver {toRevoke.categories.map(catLabel).join(", ")} na hora. Você pode liberar de
-              novo depois, se quiser.
-            </p>
+            <p><strong>{doctorName(toRevoke.doctor_id)}</strong> · {toRevoke.categories.map(catLabel).join(", ")}</p>
+            <p>{SAFETY_COPY.revoke}</p>
             <div className="sheet-actions">
               <button
                 type="button"

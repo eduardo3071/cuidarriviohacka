@@ -14,6 +14,8 @@ import { FLAG_LABEL, fmtDate, fmtNum } from "./lib/format";
 import { buildSeries, labIndexes, labName, pointKey, sortForList, summarize } from "./lib/series";
 import { attentionCount } from "./lib/wearables";
 import type { EventKind, HealthData } from "./types";
+import type { Category } from "./data/api";
+import { SAFETY_COPY } from "./lib/safetyCopy";
 
 /** Exame aberto por padrao na demonstracao (a historia: tres laboratorios, unidades diferentes). */
 export const DEFAULT_BIOMARKER = "Glicemia de jejum";
@@ -61,13 +63,15 @@ export interface DashboardProps {
   banner?: ReactNode;
   /** Visao do medico: sem Enviar e sem Acessos. */
   readOnly?: boolean;
+  /** Somente apresentação: as permissões são aplicadas antes do carregamento dos dados. */
+  availableCategories?: Category[];
   /** Tela de envio de laudo (paciente logado). Sem ela, explica como liberar. */
   upload?: ReactNode;
   /** Tela "Privacidade e acessos" (paciente logado). */
   privacy?: ReactNode;
 }
 
-export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, upload, privacy }: DashboardProps) {
+export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy }: DashboardProps) {
   const [view, setView] = useState<View>(initialView);
   const [examTab, setExamTab] = useState<ExamTab>(initialExamTab);
   const [detailOpen, setDetailOpen] = useState(initialView === "exames");
@@ -81,7 +85,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
   const labs = useMemo(() => labIndexes(data.points), [data]);
   const nAttention = attentionCount(data.alerts);
 
-  if (series.length === 0 && data.wearables.length === 0)
+  if (series.length === 0 && data.wearables.length === 0 && !readOnly)
     return (
       <main className="app">
         {banner}
@@ -94,7 +98,8 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
   const sheetPoint = current && sheetKey ? current.points.find((p) => pointKey(p) === sheetKey) : undefined;
   const notShown = data.points.length - series.reduce((n, s) => n + s.points.length, 0);
   // sem exames, "Exames" e "Inicio" levam direto aos alertas
-  const shown: View = !current && (view === "exames" || view === "inicio") ? "alertas" : view;
+  const shown: View = !current && !readOnly && (view === "exames" || view === "inicio") ? "alertas" : view;
+  const sectionAvailable = !readOnly || !availableCategories || availableCategories.includes(shown === "alertas" ? "wearables" : shown === "exames" && examTab === "linha" ? "history" : "exams");
   const items: Section[] = readOnly ? ["inicio", "exames", "alertas"] : ["inicio", "exames", "enviar", "alertas", "acessos"];
 
   const go = (s: Section) => {
@@ -129,11 +134,11 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
           <h1>Hub de Saúde</h1>
           <p className="muted">{data.patient.full_name}</p>
         </div>
-        {data.synthetic && <span className="badge-synth">Dados sintéticos de demonstração</span>}
+        {data.synthetic && <span className="badge-synth">{SAFETY_COPY.synthetic}</span>}
       </header>
       {banner}
 
-      {shown === "inicio" && current && (
+      {shown === "inicio" && current && sectionAvailable && (
         <main className="screen" aria-labelledby="h-inicio">
           <h2 id="h-inicio">Início</h2>
           {nAttention > 0 && (
@@ -157,7 +162,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
         </main>
       )}
 
-      {shown === "exames" && current && (
+      {shown === "exames" && (
         <main className="screen" aria-labelledby="h-exames">
           <h2 id="h-exames" className="sr-only">
             Exames
@@ -171,12 +176,12 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
             </button>
           </div>
 
-          {examTab === "linha" ? (
+          {!sectionAvailable ? <p>{SAFETY_COPY.unavailable}</p> : examTab === "linha" ? (
             <section className="panel">
               <h2>Linha do tempo</h2>
               <Timeline events={data.events} hidden={hidden} onToggle={toggleKind} />
             </section>
-          ) : (
+          ) : current ? (
             <div className={`exams${detailOpen ? " detail-open" : ""}`}>
               <aside className="panel side" aria-label="Exames do histórico">
                 <h2>Exames</h2>
@@ -210,20 +215,23 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
                 )}
               </section>
             </div>
-          )}
+          ) : <p>Nenhum resultado disponível ainda.</p>}
         </main>
+      )}
+
+      {readOnly && shown === "inicio" && (!sectionAvailable || !current) && (
+        <main className="screen"><h2>Início</h2><p>{!sectionAvailable ? SAFETY_COPY.unavailable : "Nenhum resultado disponível ainda."}</p></main>
       )}
 
       {shown === "alertas" && (
         <main className="screen panel" aria-labelledby="h-alertas">
           <h2 id="h-alertas">Relógio e alertas</h2>
-          <p className="muted">
-            Os alertas vêm de regras fixas sobre os dados do relógio (não de uma IA) e cada um mostra por que disparou. Eles orientam procurar um médico e
-            não fazem diagnóstico.
-          </p>
+          {sectionAvailable ? <>
+          <p className="muted">{SAFETY_COPY.alertsIntro}</p>
           <AlertsPanel alerts={data.alerts} />
           <h2 className="sub">Sinais do relógio</h2>
           <WearablesPanel samples={data.wearables} />
+          </> : <p>{SAFETY_COPY.unavailable}</p>}
         </main>
       )}
 
@@ -243,10 +251,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
           </main>
         ))}
 
-      <footer className="muted foot">
-        Este painel organiza resultados e sinais e não faz diagnóstico nem substitui a avaliação de um médico. “Fora da faixa” é sempre em relação à faixa
-        impressa no próprio laudo.
-      </footer>
+      <footer className="muted foot">{SAFETY_COPY.footer}</footer>
 
       <Sheet open={!!sheetPoint} title="Detalhe do resultado" onClose={() => setSheetKey(null)}>
         {sheetPoint && <PointDetail p={sheetPoint} />}

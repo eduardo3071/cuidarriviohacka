@@ -1,12 +1,7 @@
 import type { Flag } from "../types";
+import { RANGE_LABEL } from "../lib/safetyCopy";
 
 const ICON: Record<Flag, string> = { above: "▲", below: "▼", in_range: "✓", no_range: "–" };
-const TEXT: Record<Flag, string> = {
-  above: "acima da faixa do laudo",
-  below: "abaixo da faixa do laudo",
-  in_range: "dentro da faixa do laudo",
-  no_range: "laudo sem faixa",
-};
 
 /** Régua da faixa: faixa impressa no próprio laudo sombreada + ponto onde o valor está. */
 export function RangeRuler({ value, low, high, unit, flag }: { value: number; low: number | null; high: number | null; unit: string; flag: Flag }) {
@@ -29,7 +24,7 @@ export function RangeRuler({ value, low, high, unit, flag }: { value: number; lo
         {pos != null && <span className="ruler-dot" style={{ left: `${pos}%` }} />}
       </span>
       <span className="ruler-label">
-        <span aria-hidden="true">{ICON[flag]}</span> {TEXT[flag]}
+        <span aria-hidden="true">{ICON[flag]}</span> {RANGE_LABEL[flag]}
       </span>
     </span>
   );

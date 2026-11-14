@@ -1,5 +1,6 @@
 import { useRef, useState, type DragEvent, type ReactNode } from "react";
 import type { ConfirmResult } from "../data/documents";
+import { SAFETY_COPY } from "../lib/safetyCopy";
 
 export type UploadStep = "idle" | "working" | "review" | "done" | "error";
 
@@ -42,6 +43,8 @@ export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage,
           histórico, com a faixa de referência do próprio laudo.
         </p>
 
+        <p className="muted">{SAFETY_COPY.upload}</p>
+
         {step === "working" && (
           <p role="status" className="working">
             {workingLabel}
@@ -59,10 +62,8 @@ export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage,
           <div role="status" className="done">
             <p>
               <strong>
-                {duplicate
-                  ? "Este laudo já foi enviado e guardado antes. Nada foi duplicado."
-                  : result?.already
-                    ? "Este laudo já estava guardado. Nada mudou."
+                {duplicate || result?.already
+                  ? SAFETY_COPY.duplicate
                     : `${result?.confirmed ?? 0} ${result?.confirmed === 1 ? "resultado guardado" : "resultados guardados"} no seu histórico.`}
               </strong>
             </p>

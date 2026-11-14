@@ -29,6 +29,7 @@ import {
 import { supabaseRest, type Rest } from "./data/rest";
 import type { HealthData } from "./types";
 import { getSupabase } from "./lib/supabase";
+import { doctorReadOnlyCopy } from "./lib/safetyCopy";
 
 /** Carrega algo assincrono e mostra "carregando" / erro / resultado. */
 function useAsync<T>(fn: () => Promise<T>, deps: unknown[]): { data: T | null; error: string | null; reload: () => void } {
@@ -152,14 +153,14 @@ function DoctorPatientView({ rest, doctorId, patient, onBack }: { rest: Rest; do
           ← Voltar aos pacientes
         </button>
         <span>
-          Somente leitura: nada pode ser alterado, apagado ou enviado. Liberado pelo paciente: {patient.categories.map((c) => CATEGORY_LABEL[c]).join(", ")}.
+          {doctorReadOnlyCopy(patient.categories.map((c) => CATEGORY_LABEL[c]).join(", "))}
         </span>
       </div>
     ),
     [patient.categories, onBack],
   );
   if (!health.data) return <Status error={health.error}>Carregando…</Status>;
-  return <Dashboard data={health.data} banner={banner} readOnly />;
+  return <Dashboard data={health.data} banner={banner} readOnly availableCategories={patient.categories} />;
 }
 
 // ------------------------------------------------------------------ raiz
