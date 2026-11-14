@@ -1,2 +1,3 @@
 - The web app (apps/web) navigates via `Dashboard` sections driven by `BottomNav` (no router); patient screens (upload, privacy) are injected as props so the doctor's read-only view simply omits them.
 - Details and confirmations use the shared `Sheet` component (bottom sheet on phones, centered dialog from 768px) instead of inline panels or tables.
+- Screen components follow the component contract (Login, Dashboard, BiomarkerList, SeriesChart, PointDetail, RangeRuler, DataTable, Timeline, AlertsPanel, WearablesPanel, PrivacyView, PatientList, ReviewForm, UploadPanel): purely visual, no fetch or server state; data/API logic lives in containers (Root, UploadFlow) — keeps the port mechanical.

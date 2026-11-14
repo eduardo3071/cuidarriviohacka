@@ -23,7 +23,7 @@ export function DataTable({ series, onOpen }: { series: Series; onOpen?: (key: s
               <span className="rc-value">
                 {fmtNum(p.value)} <small>{series.unit}</small>
               </span>
-              <RangeRuler value={p.value} low={p.ref_low} high={p.ref_high} flag={p.flag} />
+              <RangeRuler value={p.value} low={p.ref_low} high={p.ref_high} unit={series.unit} flag={p.flag} />
               <span className="rc-sub">
                 {labName(p)} · no laudo: {fmtNum(p.raw_value)} {p.raw_unit} · faixa do laudo: {fmtRange(p.raw_ref_low, p.raw_ref_high, p.raw_unit) ?? "não informada"}
               </span>

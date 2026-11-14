@@ -1,65 +1,27 @@
-import { useRef, useState, type DragEvent } from "react";
-import {
-  confirmDocument,
-  getReview,
-  uploadDocument,
-  waitForJob,
-  type ApiFetch,
-  type ConfirmResult,
-  type Review,
-} from "../data/documents";
-import { ApiError } from "../data/rest";
-import { buildConfirm, toDraft, type Draft } from "../lib/review";
-import { ReviewForm } from "./ReviewForm";
+import { useRef, useState, type DragEvent, type ReactNode } from "react";
+import type { ConfirmResult } from "../data/documents";
 
-type Step =
-  | { k: "idle" }
-  | { k: "working"; label: string }
-  | { k: "review"; review: Review; draft: Draft; errors: string[]; rowErrors: Record<number, string>; saving: boolean }
-  | { k: "done"; result: ConfirmResult | null; duplicate: boolean }
-  | { k: "error"; message: string };
+export type UploadStep = "idle" | "working" | "review" | "done" | "error";
 
-const msg = (e: unknown) => (e instanceof ApiError ? e.message : "Algo deu errado. Tente de novo.");
+export interface UploadPanelProps {
+  step: UploadStep;
+  onFile: (file: File) => void;
+  onReset: () => void;
+  workingLabel?: string;
+  errorMessage?: string;
+  result?: ConfirmResult | null;
+  duplicate?: boolean;
+  /** Conteúdo da etapa "review" (o ReviewForm). */
+  review?: ReactNode;
+}
 
-/** Enviar laudo -> a API le em segundo plano -> a pessoa confere -> vai para o historico. */
-export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: () => void }) {
-  const [step, setStep] = useState<Step>({ k: "idle" });
+/** Enviar laudo (puramente visual): escolher arquivo -> lendo -> conferir -> guardado. */
+export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage, result, duplicate, review }: UploadPanelProps) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
-
-  async function handleFile(file: File) {
-    try {
-      setStep({ k: "working", label: "Enviando o laudo…" });
-      const up = await uploadDocument(api, file);
-      if (up.duplicate && up.status === "confirmed") return setStep({ k: "done", result: null, duplicate: true });
-      setStep({ k: "working", label: "Lendo o laudo… isso pode levar alguns segundos." });
-      await waitForJob(api, up.jobId);
-      const review = await getReview(api, up.documentId);
-      if (review.observations.length === 0)
-        return setStep({ k: "error", message: "Não encontrei resultados de exame neste arquivo. Confira se é um laudo legível e tente outro." });
-      setStep({ k: "review", review, draft: toDraft(review), errors: [], rowErrors: {}, saving: false });
-    } catch (e) {
-      setStep({ k: "error", message: msg(e) });
-    }
-  }
-
-  async function confirm() {
-    if (step.k !== "review") return;
-    const built = buildConfirm(step.draft);
-    if (!built.ok) return setStep({ ...step, errors: built.errors, rowErrors: built.rowErrors });
-    setStep({ ...step, saving: true, errors: [], rowErrors: {} });
-    try {
-      const result = await confirmDocument(api, step.review.document_id, built.payload);
-      setStep({ k: "done", result, duplicate: false });
-      onConfirmed();
-    } catch (e) {
-      setStep({ ...step, saving: false, errors: [msg(e)], rowErrors: {} });
-    }
-  }
-
   const pick = (files: FileList | null) => {
     const f = files?.[0];
-    if (f) void handleFile(f);
+    if (f) onFile(f);
     if (input.current) input.current.value = ""; // permite escolher o mesmo arquivo de novo
   };
   const onDrop = (e: DragEvent) => {
@@ -67,23 +29,9 @@ export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: 
     setOver(false);
     pick(e.dataTransfer.files);
   };
-  const reset = () => setStep({ k: "idle" });
+  const reset = onReset;
 
-  if (step.k === "review")
-    return (
-      <div className="screen">
-        <ReviewForm
-          review={step.review}
-          draft={step.draft}
-          onChange={(draft) => setStep({ ...step, draft })}
-          errors={step.errors}
-          rowErrors={step.rowErrors}
-          busy={step.saving}
-          onConfirm={() => void confirm()}
-          onCancel={reset}
-        />
-      </div>
-    );
+  if (step === "review") return <div className="screen">{review}</div>;
 
   return (
     <div className="screen">
@@ -94,32 +42,32 @@ export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: 
           histórico, com a faixa de referência do próprio laudo.
         </p>
 
-        {step.k === "working" && (
+        {step === "working" && (
           <p role="status" className="working">
-            {step.label}
+            {workingLabel}
           </p>
         )}
-        {step.k === "error" && (
+        {step === "error" && (
           <div role="alert" className="form-error">
-            <p>{step.message}</p>
+            <p>{errorMessage}</p>
             <button type="button" className="link" onClick={reset}>
               Tentar de novo
             </button>
           </div>
         )}
-        {step.k === "done" && (
+        {step === "done" && (
           <div role="status" className="done">
             <p>
               <strong>
-                {step.duplicate
+                {duplicate
                   ? "Este laudo já foi enviado e guardado antes. Nada foi duplicado."
-                  : step.result?.already
+                  : result?.already
                     ? "Este laudo já estava guardado. Nada mudou."
-                    : `${step.result?.confirmed ?? 0} ${step.result?.confirmed === 1 ? "resultado guardado" : "resultados guardados"} no seu histórico.`}
+                    : `${result?.confirmed ?? 0} ${result?.confirmed === 1 ? "resultado guardado" : "resultados guardados"} no seu histórico.`}
               </strong>
             </p>
-            {step.result && step.result.submitted > step.result.confirmed && (
-              <p className="muted">{step.result.submitted - step.result.confirmed} repetido(s) neste laudo foram ignorados.</p>
+            {result && result.submitted > result.confirmed && (
+              <p className="muted">{result.submitted - result.confirmed} repetido(s) neste laudo foram ignorados.</p>
             )}
             <button type="button" className="primary" onClick={reset}>
               Enviar outro laudo
@@ -127,7 +75,7 @@ export function UploadPanel({ api, onConfirmed }: { api: ApiFetch; onConfirmed: 
           </div>
         )}
 
-        {(step.k === "idle" || step.k === "error") && (
+        {(step === "idle" || step === "error") && (
           <label
             className={`dropzone${over ? " over" : ""}`}
             onDragOver={(e) => {

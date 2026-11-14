@@ -5,7 +5,7 @@ import { Login } from "./auth/Login";
 import { useAuth } from "./auth/useAuth";
 import { PatientList } from "./components/PatientList";
 import { PrivacyView } from "./components/PrivacyView";
-import { UploadPanel } from "./components/UploadPanel";
+import { UploadFlow } from "./components/UploadFlow";
 import { ConnectionNotice, Loading } from "./components/ConnectionNotice";
 import { makeApiFetch } from "./data/apiFetch";
 import type { ApiFetch } from "./data/documents";
@@ -85,7 +85,7 @@ function PatientHome({ rest, api, role }: { rest: Rest; api: ApiFetch | null; ro
       data={health.data}
       upload={
         api ? (
-          <UploadPanel api={api} onConfirmed={health.reload} />
+          <UploadFlow api={api} onConfirmed={health.reload} />
         ) : (
           <main className="screen panel">
             <h2>Enviar laudo</h2>

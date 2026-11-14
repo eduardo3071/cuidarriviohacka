@@ -9,7 +9,7 @@ const TEXT: Record<Flag, string> = {
 };
 
 /** Régua da faixa: faixa impressa no próprio laudo sombreada + ponto onde o valor está. */
-export function RangeRuler({ value, low, high, flag }: { value: number; low: number | null; high: number | null; flag: Flag }) {
+export function RangeRuler({ value, low, high, unit, flag }: { value: number; low: number | null; high: number | null; unit: string; flag: Flag }) {
   let pos: number | null = null;
   let band: [number, number] | null = null;
   if (low != null || high != null) {
@@ -24,7 +24,7 @@ export function RangeRuler({ value, low, high, flag }: { value: number; low: num
   }
   return (
     <span className={`ruler state-${flag}`}>
-      <span className="ruler-track" aria-hidden="true">
+      <span className="ruler-track" aria-hidden="true" title={`${value} ${unit}`}>
         {band && <span className="ruler-band" style={{ left: `${band[0]}%`, width: `${band[1] - band[0]}%` }} />}
         {pos != null && <span className="ruler-dot" style={{ left: `${pos}%` }} />}
       </span>
