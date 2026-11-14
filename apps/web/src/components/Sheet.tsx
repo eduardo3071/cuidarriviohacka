@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 
 /** Folha de baixo (bottom sheet): detalhes e confirmacoes. Fecha com Esc, com o fundo ou com o botao. */
-export function Sheet({ open, title, onClose, children }: { open: boolean; title: string; onClose: () => void; children: ReactNode }) {
+export function Sheet({ open, title, onClose, children, variant = "bottom" }: { open: boolean; title: string; onClose: () => void; children: ReactNode; variant?: "bottom" | "dialog" }) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const closeRef = useRef(onClose);
@@ -32,7 +32,7 @@ export function Sheet({ open, title, onClose, children }: { open: boolean; title
   }, [open]);
   if (!open) return null;
   return (
-    <div className="sheet-layer">
+    <div className={`sheet-layer sheet-layer-${variant}`}>
       <div className="sheet-backdrop" onClick={onClose} aria-hidden="true" />
       <div className="sheet" role="dialog" aria-modal="true" aria-labelledby={titleId} ref={ref}>
         <div className="sheet-grip" aria-hidden="true" />

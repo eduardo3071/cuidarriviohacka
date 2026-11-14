@@ -1,14 +1,16 @@
+import { Bell, FilePlus2, FlaskConical, House, ShieldCheck, type LucideIcon } from "lucide-react";
+
 export type Section = "inicio" | "exames" | "enviar" | "alertas" | "acessos";
 
-const ITEMS: { id: Section; label: string; icon: string }[] = [
-  { id: "inicio", label: "Início", icon: "⌂" },
-  { id: "exames", label: "Exames", icon: "▤" },
-  { id: "enviar", label: "Enviar", icon: "＋" },
-  { id: "alertas", label: "Alertas", icon: "▲" },
-  { id: "acessos", label: "Acessos", icon: "◉" },
+export const NAV_ITEMS: readonly { id: Section; label: string; icon: LucideIcon }[] = [
+  { id: "inicio", label: "Início", icon: House },
+  { id: "exames", label: "Exames", icon: FlaskConical },
+  { id: "enviar", label: "Enviar", icon: FilePlus2 },
+  { id: "alertas", label: "Alertas", icon: Bell },
+  { id: "acessos", label: "Acessos", icon: ShieldCheck },
 ];
 
-/** Barra inferior fixa (no maximo 5 itens), com "Enviar" em destaque. */
+/** Barra inferior fixa (no máximo 5 itens), com "Enviar" em destaque. */
 export function BottomNav({
   current,
   onGo,
@@ -23,26 +25,27 @@ export function BottomNav({
   return (
     <nav className="bottomnav" aria-label="Navegação principal">
       <ul>
-        {ITEMS.filter((i) => items.includes(i.id)).map((i) => (
-          <li key={i.id}>
-            <button
-              type="button"
-              className={`bn-item${i.id === "enviar" ? " bn-primary" : ""}`}
-              aria-current={current === i.id ? "page" : undefined}
-              onClick={() => onGo(i.id)}
-            >
-              <span className="bn-icon" aria-hidden="true">
-                {i.icon}
-              </span>
-              <span className="bn-label">{i.label}</span>
-              {i.id === "alertas" && alertCount > 0 && (
-                <span className="bn-count" aria-label={`${alertCount} ${alertCount === 1 ? "alerta" : "alertas"} para atenção`}>
-                  {alertCount}
-                </span>
-              )}
-            </button>
-          </li>
-        ))}
+        {NAV_ITEMS.filter((i) => items.includes(i.id)).map((i) => {
+          const Icon = i.icon;
+          return (
+            <li key={i.id}>
+              <button
+                type="button"
+                className={`bn-item${i.id === "enviar" ? " bn-primary" : ""}`}
+                aria-current={current === i.id ? "page" : undefined}
+                onClick={() => onGo(i.id)}
+              >
+                <span className="bn-icon" aria-hidden="true"><Icon size={24} strokeWidth={1.75} /></span>
+                <span className="bn-label">{i.label}</span>
+                {i.id === "alertas" && alertCount > 0 && (
+                  <span className="bn-count" aria-label={`${alertCount} ${alertCount === 1 ? "alerta" : "alertas"} para atenção`}>
+                    {alertCount}
+                  </span>
+                )}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );

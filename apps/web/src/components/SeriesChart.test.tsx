@@ -24,15 +24,17 @@ describe("SeriesChart", () => {
   it("a bandeira de cada ponto vem da faixa do proprio laudo (4 na faixa, 3 acima)", () => {
     expect(count(html, 'data-flag="in_range"')).toBe(4);
     expect(count(html, 'data-flag="above"')).toBe(3);
-    expect(count(html, "<circle class=\"marker marker-in_range\"")).toBe(4);
-    expect(count(html, '<path class="marker marker-above"')).toBe(3); // triangulo: nao depende so da cor
+    expect(count(html, 'class="point-state-ring ring-above"')).toBe(3);
+    expect(count(html, 'class="reference-band"')).toBe(1);
   });
 
-  it("legenda tem os tres laboratorios, e cada um usa a cor fixa dele", () => {
-    expect(count(html, 'class="swatch lab-')).toBe(3);
+  it("legenda tem os tres laboratorios e o ultimo ponto tem rotulo direto", () => {
+    expect(count(html, '<svg width="16" height="16"')).toBe(3);
     expect(html).toContain("Lakeside Medical Centre");
-    expect(html).toContain("A <strong>barra</strong> atrás de cada ponto é a faixa de referência do laudo");
+    expect(html).toContain("A <strong>área sombreada</strong> é a faixa do laudo mais recente");
     expect(html).toContain('data-lab="Lakeside Medical Centre"');
+    expect(html).toContain('class="last-label"');
+    expect(html).toContain("118 mg/dL");
   });
 
   it("e acessivel: imagem com titulo descritivo e pontos operaveis por teclado", () => {
@@ -72,8 +74,8 @@ describe("SeriesChart", () => {
   it("marca o ponto selecionado uma vez so", () => {
     const last = get("Glicemia de jejum").points.at(-1)!;
     const sel = render("Glicemia de jejum", pointKey(last));
-    expect(count(sel, 'class="ring"')).toBe(1);
+    expect(count(sel, 'class="selection-ring"')).toBe(1);
     expect(count(sel, 'aria-pressed="true"')).toBe(1);
-    expect(count(html, 'class="ring"')).toBe(0);
+    expect(count(html, 'class="selection-ring"')).toBe(0);
   });
 });
