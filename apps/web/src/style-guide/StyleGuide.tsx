@@ -94,7 +94,7 @@ export function StyleGuide() {
   const [selectedKey, setSelectedKey] = useState(pointKey(latest));
 
   useEffect(() => {
-    document.title = "Guia de estilo — Rivio";
+    document.title = "Guia de estilo — Cuidar+";
     if (dark) document.documentElement.dataset.theme = "dark";
     else delete document.documentElement.dataset.theme;
     return () => { delete document.documentElement.dataset.theme; };

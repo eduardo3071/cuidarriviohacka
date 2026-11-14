@@ -1,6 +1,7 @@
-import { HeartPulse, LogOut, Play, UserRound, Users } from "lucide-react";
+import { LogOut, Play, UserRound, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import "../pitch/pitch.css";
+import logo from "../assets/cuidar-logo.png.asset.json";
 import { SAFETY_COPY } from "../lib/safetyCopy";
 import { BottomNav, NAV_ITEMS, type Section } from "./BottomNav";
 import { Toast } from "./ui";
@@ -9,9 +10,8 @@ const SIDE_LABEL: Partial<Record<Section, string>> = { enviar: "Enviar laudo", a
 
 export function Brand() {
   return (
-    <span className="brand" aria-label="Rivio">
-      <span className="brand-mark"><HeartPulse size={18} strokeWidth={1.75} aria-hidden="true" /></span>
-      <span className="brand-name">rivio</span>
+    <span className="brand">
+      <img className="brand-logo" src={logo.url} alt="Cuidar+" />
     </span>
   );
 }
