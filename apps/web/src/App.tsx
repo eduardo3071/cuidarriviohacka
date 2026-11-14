@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertsPanel } from "./components/AlertsPanel";
 import { BiomarkerList } from "./components/BiomarkerList";
-import { BottomNav, type Section } from "./components/BottomNav";
+import { type Section } from "./components/BottomNav";
+import { RangeRuler } from "./components/RangeRuler";
+import { rangeText, StateChip } from "./components/StateChip";
+import { Bell, ChevronLeft, Upload } from "lucide-react";
+import "./dashboard.css";
 import { ConnectionNotice, Loading } from "./components/ConnectionNotice";
 import { DataTable } from "./components/DataTable";
 import { PointDetail } from "./components/PointDetail";
@@ -12,7 +16,7 @@ import { AppShell } from "./components/AppShell";
 import { FirstAccess } from "./components/FirstAccess";
 import { WearablesPanel } from "./components/WearablesPanel";
 import { demoSource, type DataSource } from "./data/source";
-import { FLAG_LABEL, fmtDate, fmtNum } from "./lib/format";
+import { fmtDate, fmtNum } from "./lib/format";
 import { buildSeries, labIndexes, labName, pointKey, sortForList, summarize } from "./lib/series";
 import { attentionCount } from "./lib/wearables";
 import type { EventKind, HealthData } from "./types";
@@ -134,54 +138,88 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
     return f === "above" || f === "below";
   });
 
+  const labCount = new Set(data.points.map((p) => labName(p))).size;
+  const lastDate = data.points.reduce((m, p) => (p.collected_at > m ? p.collected_at : m), "");
+  const lastPts = data.points.filter((p) => p.collected_at === lastDate);
+  const lastLab = lastPts[0] ? labName(lastPts[0]) : "";
+  const latest = current ? summarize(current).latest : null;
+  const titles: Record<Section, string> = { inicio: "Início", exames: "Exames", enviar: "Enviar laudo", alertas: "Alertas", acessos: "Privacidade e acessos" };
+  const firstName = data.patient.full_name.split(" ")[0];
+  const attentionCard = nAttention > 0 && (
+    <div className="alert-banner"><div className="att-card">
+      <p className="att-title"><Bell size={24} strokeWidth={1.75} aria-hidden="true" />{nAttention === 1 ? "1 sinal do relógio merece atenção" : `${nAttention} sinais do relógio merecem atenção`}</p>
+      <p>Regras fixas, não IA. Converse com um médico.</p>
+      <button type="button" className="att-link" onClick={() => go("alertas")}>Ver por quê</button>
+    </div></div>
+  );
+  const sendButton = !readOnly && (
+    <button type="button" className="ds-button ds-button-primary wide" onClick={() => go("enviar")}><Upload size={20} strokeWidth={1.75} aria-hidden="true" />Enviar um laudo</button>
+  );
+
   return (
-    <div className="app has-nav">
+    <AppShell current={shown} onGo={(s) => s !== "pacientes" && go(s)} items={items} alertCount={nAttention} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner} title={titles[shown]}>
       <ConnectionNotice />
-      <header className="top">
-        <div className="top-id">
-          <h1>Hub de Saúde</h1>
-          <p className="muted">{data.patient.full_name}</p>
-        </div>
-        {data.synthetic && <span className="badge-synth">{SAFETY_COPY.synthetic}</span>}
-      </header>
-      {banner}
 
       {shown === "inicio" && current && sectionAvailable && (
-        <main className="screen" aria-labelledby="h-inicio">
-          <h2 id="h-inicio">Início</h2>
-          {nAttention > 0 && (
-            <button type="button" className="alert-banner" onClick={() => go("alertas")}>
-              <span aria-hidden="true">▲</span>{" "}
-              {nAttention === 1 ? "1 sinal do relógio merece atenção" : `${nAttention} sinais do relógio merecem atenção`} — ver por que disparou
-            </button>
-          )}
-          <section className="panel">
-            <h3 className="list-title">Exames com resultado fora da faixa do laudo</h3>
-            <p className="muted">“Fora da faixa” compara cada resultado com a faixa impressa no próprio laudo. Converse com um médico sobre eles.</p>
-            {attentionExams.length === 0 ? (
-              <p>Nenhum exame recente está fora da faixa do próprio laudo.</p>
-            ) : (
-              <BiomarkerList series={attentionExams} selected="" onSelect={openExam} />
-            )}
-          </section>
-          <button type="button" className="secondary wide" onClick={() => openExam(current.biomarker)}>
-            Ver todos os exames
-          </button>
+        <main className="screen home" aria-labelledby="h-inicio">
+          <div className="warm">
+            <h2 id="h-inicio">Olá, {firstName}</h2>
+            <p>Veja o que merece atenção hoje.</p>
+          </div>
+          <div className="home-att-m">{attentionCard}</div>
+          <div className="stats">
+            <div className="stat"><strong>{data.points.length}</strong><span>resultados</span></div>
+            <div className="stat"><strong>{labCount}</strong><span>{labCount === 1 ? "laboratório" : "laboratórios"}</span></div>
+            <div className="stat"><strong>{nAttention}</strong><span>alertas de atenção</span></div>
+          </div>
+          <div className="home-grid">
+            <section className="out-card" aria-labelledby="h-fora">
+              <h3 id="h-fora">Fora da faixa do laudo</h3>
+              <p className="caption">Comparado com a faixa impressa no próprio laudo. Converse com um médico sobre eles.</p>
+              {attentionExams.length === 0 ? (
+                <p>Nenhum exame recente está fora da faixa do próprio laudo.</p>
+              ) : (
+                <ul className="out-list">
+                  {attentionExams.slice(0, 4).map((s) => {
+                    const l = summarize(s).latest;
+                    const r = rangeText(l.ref_low, l.ref_high);
+                    return (
+                      <li key={s.biomarker}>
+                        <button type="button" className="out-item" onClick={() => openExam(s.biomarker)}>
+                          <span className="out-top"><span className="out-name">{s.biomarker}</span><span className="out-val">{fmtNum(l.value)} <small>{s.unit}</small></span></span>
+                          <RangeRuler value={l.value} low={l.ref_low} high={l.ref_high} unit={s.unit} flag={l.flag} showLabel={false} />
+                          <span className="out-foot"><StateChip flag={l.flag} short />{r && <span className="caption">faixa {r}</span>}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+            <div className="home-side">
+              <div className="home-att-d">{attentionCard}</div>
+              {lastDate && (
+                <div className="ds-card last-card">
+                  <p className="caption">Último exame guardado</p>
+                  <p className="last-n">{lastPts.length} {lastPts.length === 1 ? "resultado" : "resultados"}</p>
+                  <p className="caption">{fmtDate(lastDate)} · {lastLab}</p>
+                  {sendButton}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="home-send-m">{sendButton}</div>
         </main>
       )}
 
       {shown === "exames" && (
-        <main className="screen" aria-labelledby="h-exames">
-          <h2 id="h-exames" className="sr-only">
-            Exames
-          </h2>
-          <div className="segmented" role="tablist" aria-label="Exames">
-            <button type="button" role="tab" aria-selected={examTab === "resultados"} onClick={() => setExamTab("resultados")}>
-              Resultados
-            </button>
-            <button type="button" role="tab" aria-selected={examTab === "linha"} onClick={() => setExamTab("linha")}>
-              Linha do tempo
-            </button>
+        <main className={`screen exams-screen${detailOpen && examTab === "resultados" ? " detail-open" : ""}`} aria-labelledby="h-exames">
+          <div className="exams-head">
+            <h2 id="h-exames" className="page-title">Exames</h2>
+            <div className="segmented" role="tablist" aria-label="Exames">
+              <button type="button" role="tab" aria-selected={examTab === "resultados"} onClick={() => setExamTab("resultados")}>Exames</button>
+              <button type="button" role="tab" aria-selected={examTab === "linha"} onClick={() => setExamTab("linha")}>Linha do tempo</button>
+            </div>
           </div>
 
           {!sectionAvailable ? <p>{SAFETY_COPY.unavailable}</p> : examTab === "linha" ? (
@@ -189,31 +227,38 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
               <h2>Linha do tempo</h2>
               <Timeline events={data.events} hidden={hidden} onToggle={toggleKind} />
             </section>
-          ) : current ? (
+          ) : current && latest ? (
             <div className={`exams${detailOpen ? " detail-open" : ""}`}>
-              <aside className="panel side" aria-label="Exames do histórico">
-                <h2>Exames</h2>
-                <BiomarkerList series={list} selected={current.biomarker} onSelect={openExam} />
+              <aside className="side list-card" aria-label="Exames do histórico">
+                <BiomarkerList series={list} selected={current.biomarker} onSelect={openExam} grouped />
               </aside>
-              <section className="panel main" aria-label={`Evolução de ${current.biomarker}`}>
-                <button type="button" className="back" onClick={() => setDetailOpen(false)}>
-                  ← Todos os exames
-                </button>
-                <h2>{current.biomarker}</h2>
-                <p className="muted">
-                  Todos os resultados na mesma unidade ({current.unit}), mesmo quando vieram de laboratórios e unidades diferentes.
-                </p>
-                <SeriesChart series={current} labIndex={labs} selectedKey={pointKey(selectedPoint!)} onSelect={setSelectedKey} onOpen={setSheetKey} />
-                {selectedPoint && (
-                  <button type="button" className="selected-line" onClick={() => setSheetKey(pointKey(selectedPoint))}>
-                    <span className={`chip flag-${selectedPoint.flag}`}>{FLAG_LABEL[selectedPoint.flag]}</span>
-                    <span>
-                      {fmtDate(selectedPoint.collected_at)} · {labName(selectedPoint)} · {fmtNum(selectedPoint.value)} {current.unit}
-                    </span>
-                    <span className="link-like">Ver detalhes</span>
-                  </button>
-                )}
-                <DataTable series={current} onOpen={setSheetKey} />
+              <section className="main" aria-label={`Evolução de ${current.biomarker}`}>
+                <button type="button" className="back" onClick={() => setDetailOpen(false)}><ChevronLeft size={20} strokeWidth={1.75} aria-hidden="true" />Exames</button>
+                <div className="exam-head">
+                  <h2>{current.biomarker}</h2>
+                  <span className="exam-head-chip"><StateChip flag={latest.flag} /></span>
+                </div>
+                <p className="exam-note">Todos os resultados na mesma unidade ({current.unit}), mesmo vindos de laboratórios e unidades diferentes.</p>
+                <div className="ds-card highlight">
+                  <p className="hl-value"><strong>{fmtNum(latest.value)}</strong> <span>{current.unit}</span></p>
+                  <StateChip flag={latest.flag} />
+                  <RangeRuler value={latest.value} low={latest.ref_low} high={latest.ref_high} unit={current.unit} flag={latest.flag} showLabel={false} />
+                  <p className="caption">{labName(latest)} · {fmtDate(latest.collected_at)} · faixa impressa no laudo: {rangeText(latest.raw_ref_low, latest.raw_ref_high) ?? "não informada"}</p>
+                </div>
+                <div className="ds-card chart-box">
+                  <SeriesChart series={current} labIndex={labs} selectedKey={pointKey(selectedPoint!)} onSelect={setSelectedKey} onOpen={(k) => { if (typeof window === "undefined" || window.innerWidth < 1024) setSheetKey(k); }} />
+                </div>
+                <div className="exam-cols">
+                  {selectedPoint && (
+                    <div className="ds-card point-card">
+                      <h3>Detalhe do ponto selecionado</h3>
+                      <PointDetail p={selectedPoint} />
+                    </div>
+                  )}
+                  <div className="ds-card table-card">
+                    <DataTable series={current} selectedKey={pointKey(selectedPoint!)} onOpen={(k) => { setSelectedKey(k); if (typeof window === "undefined" || window.innerWidth < 1024) setSheetKey(k); }} />
+                  </div>
+                </div>
                 {notShown > 0 && (
                   <p className="muted" role="note">
                     {notShown === 1
@@ -261,11 +306,9 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
 
       <footer className="muted foot">{SAFETY_COPY.footer}</footer>
 
-      <Sheet open={!!sheetPoint} title="Detalhe do resultado" onClose={() => setSheetKey(null)}>
+      <Sheet open={!!sheetPoint} title={sheetPoint ? `Resultado de ${fmtDate(sheetPoint.collected_at)}` : "Detalhe do resultado"} onClose={() => setSheetKey(null)}>
         {sheetPoint && <PointDetail p={sheetPoint} />}
       </Sheet>
-
-      <BottomNav current={shown} onGo={go} items={items} alertCount={nAttention} />
-    </div>
+    </AppShell>
   );
 }

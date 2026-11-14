@@ -6,7 +6,7 @@ import { chartDomain, LAB_COLOR_COUNT, labName, pointKey, rangeBar, summarize, t
 const DEFAULT_W = 760;
 const M = { top: 36, right: 24, bottom: 40, left: 58 };
 const BAR_W = 14;
-const heightFor = (w: number): number => Math.round(Math.min(340, Math.max(240, w * 0.45)));
+const heightFor = (w: number): number => (w >= 500 ? 320 : 240);
 const yearFmt = new Intl.DateTimeFormat("pt-BR", { year: "numeric", timeZone: "UTC" });
 
 /** Uma forma por laboratório: círculo, quadrado, losango e triângulo. */

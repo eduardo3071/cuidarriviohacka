@@ -130,10 +130,10 @@ function PrivacyPanel({ rest, patientId }: { rest: Rest; patientId: string }) {
 }
 
 // ------------------------------------------------------------------ medico
-function DoctorHome({ rest, role }: { rest: Rest; role: Extract<Role, { kind: "doctor" }> }) {
+function DoctorHome({ rest, role, onSignOut }: { rest: Rest; role: Extract<Role, { kind: "doctor" }>; onSignOut: () => void }) {
   const [open, setOpen] = useState<MyPatient | null>(null);
   const patients = useAsync<MyPatient[]>(() => listMyPatients(rest, role.doctorId), [rest, role.doctorId, open === null]);
-  if (open) return <DoctorPatientView rest={rest} doctorId={role.doctorId} patient={open} onBack={() => setOpen(null)} />;
+  if (open) return <DoctorPatientView rest={rest} doctorId={role.doctorId} patient={open} onBack={() => setOpen(null)} onSignOut={onSignOut} />;
   if (!patients.data) return <Status error={patients.error}>Carregando…</Status>;
   return (
     <div className="app">
@@ -142,7 +142,7 @@ function DoctorHome({ rest, role }: { rest: Rest; role: Extract<Role, { kind: "d
   );
 }
 
-function DoctorPatientView({ rest, doctorId, patient, onBack }: { rest: Rest; doctorId: string; patient: MyPatient; onBack: () => void }) {
+function DoctorPatientView({ rest, doctorId, patient, onBack, onSignOut }: { rest: Rest; doctorId: string; patient: MyPatient; onBack: () => void; onSignOut: () => void }) {
   const health = useAsync<HealthData>(async () => {
     // a auditoria vem ANTES dos dados e falha fechada: se nao deu para registrar o acesso, os dados nao aparecem
     await logAccess(rest, { doctorId, patientId: patient.id, categories: patient.categories });
@@ -162,7 +162,7 @@ function DoctorPatientView({ rest, doctorId, patient, onBack }: { rest: Rest; do
     [patient.categories, onBack],
   );
   if (!health.data) return <Status error={health.error}>Carregando…</Status>;
-  return <Dashboard data={health.data} banner={banner} readOnly availableCategories={patient.categories} />;
+  return <Dashboard data={health.data} banner={banner} readOnly availableCategories={patient.categories} onSignOut={onSignOut} />;
 }
 
 // ------------------------------------------------------------------ raiz
@@ -185,12 +185,10 @@ function Authenticated({ client }: { client: SupabaseClient }) {
       </Shell>
     );
   return role.kind === "patient" ? (
-    <Shell who={role.name} subtitle="paciente" onSignOut={() => void signOut()}>
-      <PatientHome rest={rest} api={api} role={role} onDemo={() => setDemo(true)} onSignOut={() => void signOut()} />
-    </Shell>
+    <PatientHome rest={rest} api={api} role={role} onDemo={() => setDemo(true)} onSignOut={() => void signOut()} />
   ) : (
     <Shell who={role.name} subtitle="médico" onSignOut={() => void signOut()}>
-      <DoctorHome rest={rest} role={role} />
+      <DoctorHome rest={rest} role={role} onSignOut={() => void signOut()} />
     </Shell>
   );
 }

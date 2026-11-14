@@ -4,7 +4,7 @@ import { RANGE_LABEL } from "../lib/safetyCopy";
 const ICON: Record<Flag, string> = { above: "▲", below: "▼", in_range: "✓", no_range: "–" };
 
 /** Régua da faixa: faixa impressa no próprio laudo sombreada + ponto onde o valor está. */
-export function RangeRuler({ value, low, high, unit, flag }: { value: number; low: number | null; high: number | null; unit: string; flag: Flag }) {
+export function RangeRuler({ value, low, high, unit, flag, showLabel = true }: { value: number; low: number | null; high: number | null; unit: string; flag: Flag; showLabel?: boolean }) {
   let pos: number | null = null;
   let band: [number, number] | null = null;
   if (low != null || high != null) {
@@ -23,9 +23,9 @@ export function RangeRuler({ value, low, high, unit, flag }: { value: number; lo
         {band && <span className="ruler-band" style={{ left: `${band[0]}%`, width: `${band[1] - band[0]}%` }} />}
         {pos != null && <span className="ruler-dot" style={{ left: `${pos}%` }} />}
       </span>
-      <span className="ruler-label">
+      {showLabel && <span className="ruler-label">
         <span aria-hidden="true">{ICON[flag]}</span> {RANGE_LABEL[flag]}
-      </span>
+      </span>}
     </span>
   );
 }
