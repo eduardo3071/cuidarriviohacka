@@ -75,7 +75,7 @@ function Status({ error, children }: { error: string | null; children: ReactNode
 }
 
 // ------------------------------------------------------------------ paciente
-function PatientHome({ rest, api, role }: { rest: Rest; api: ApiFetch | null; role: Extract<Role, { kind: "patient" }> }) {
+function PatientHome({ rest, api, role, onDemo, onSignOut }: { rest: Rest; api: ApiFetch | null; role: Extract<Role, { kind: "patient" }>; onDemo: () => void; onSignOut: () => void }) {
   const health = useAsync<HealthData>(
     () => loadHealthData(rest, { id: role.patientId, name: role.name, birthDate: role.birthDate, sex: role.sex }, config.synthetic),
     [rest, role.patientId],
@@ -84,6 +84,8 @@ function PatientHome({ rest, api, role }: { rest: Rest; api: ApiFetch | null; ro
   return (
     <Dashboard
       data={health.data}
+      onDemo={onDemo}
+      onSignOut={onSignOut}
       upload={
         api ? (
           <UploadFlow api={api} onConfirmed={health.reload} />
@@ -184,7 +186,7 @@ function Authenticated({ client }: { client: SupabaseClient }) {
     );
   return role.kind === "patient" ? (
     <Shell who={role.name} subtitle="paciente" onSignOut={() => void signOut()}>
-      <PatientHome rest={rest} api={api} role={role} />
+      <PatientHome rest={rest} api={api} role={role} onDemo={() => setDemo(true)} onSignOut={() => void signOut()} />
     </Shell>
   ) : (
     <Shell who={role.name} subtitle="médico" onSignOut={() => void signOut()}>

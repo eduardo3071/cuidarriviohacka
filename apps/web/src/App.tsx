@@ -8,6 +8,8 @@ import { PointDetail } from "./components/PointDetail";
 import { SeriesChart } from "./components/SeriesChart";
 import { Sheet } from "./components/Sheet";
 import { Timeline } from "./components/Timeline";
+import { AppShell } from "./components/AppShell";
+import { FirstAccess } from "./components/FirstAccess";
 import { WearablesPanel } from "./components/WearablesPanel";
 import { demoSource, type DataSource } from "./data/source";
 import { FLAG_LABEL, fmtDate, fmtNum } from "./lib/format";
@@ -69,9 +71,13 @@ export interface DashboardProps {
   upload?: ReactNode;
   /** Tela "Privacidade e acessos" (paciente logado). */
   privacy?: ReactNode;
+  /** Primeiro acesso: abre a demonstração. */
+  onDemo?: () => void;
+  /** Primeiro acesso: sair da conta. */
+  onSignOut?: () => void;
 }
 
-export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy }: DashboardProps) {
+export function Dashboard({ data, initialView = "inicio", initialExamTab = "resultados", banner, readOnly = false, availableCategories, upload, privacy, onDemo, onSignOut }: DashboardProps) {
   const [view, setView] = useState<View>(initialView);
   const [examTab, setExamTab] = useState<ExamTab>(initialExamTab);
   const [detailOpen, setDetailOpen] = useState(initialView === "exames");
@@ -87,10 +93,12 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
 
   if (series.length === 0 && data.wearables.length === 0 && !readOnly)
     return (
-      <main className="app">
-        {banner}
-        <p>Nenhum resultado disponível ainda.</p>
-      </main>
+      <AppShell current={view} onGo={(s) => s !== "pacientes" && setView(s)} accountName={data.patient.full_name} synthetic={data.synthetic} onSignOut={onSignOut} banner={banner}
+        title={view === "enviar" ? "Enviar laudo" : view === "acessos" ? "Privacidade e acessos" : view === "alertas" ? "Alertas" : view === "exames" ? "Exames" : "Início"}>
+        {view === "enviar" ? (upload ?? <main className="screen panel"><h2>Enviar laudo</h2><p>Na demonstração não é possível enviar laudos.</p></main>)
+          : view === "acessos" && privacy ? privacy
+          : <FirstAccess patientName={data.patient.full_name} onSendFirst={() => setView("enviar")} onDemo={onDemo} />}
+      </AppShell>
     );
 
   const current = series.find((s) => s.biomarker === (selectedName ?? DEFAULT_BIOMARKER)) ?? list[0];
