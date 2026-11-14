@@ -2,6 +2,7 @@ import { useRef, useState, type FormEvent } from "react";
 import { CircleAlert, FileText, LoaderCircle, Ruler, ShieldCheck } from "lucide-react";
 import { Brand } from "../components/AppShell";
 import { Button, Input } from "../components/ui";
+import { SAFETY_COPY } from "../lib/safetyCopy";
 import { loginErrorMessage, validateLogin } from "./messages";
 import "./login.css";
 
@@ -51,11 +52,13 @@ export function Login({ onSubmit, onDemo, initialError = null }: LoginProps) {
           <Brand />
           <h1 id="login-value">Seu histórico de saúde, organizado e só seu</h1>
           <ul className="login-benefits">
-            <li><FileText size={24} strokeWidth={1.75} aria-hidden="true" /><span>Organiza exames de papel e PDF</span></li>
-            <li><Ruler size={24} strokeWidth={1.75} aria-hidden="true" /><span>Mostra cada resultado contra a faixa do próprio laudo</span></li>
-            <li><ShieldCheck size={24} strokeWidth={1.75} aria-hidden="true" /><span>Você decide quem pode ver</span></li>
+            <li><FileText size={20} strokeWidth={1.75} aria-hidden="true" /><span>Organiza exames de papel e PDF</span></li>
+            <li><Ruler size={20} strokeWidth={1.75} aria-hidden="true" /><span>Mostra cada resultado contra a faixa do próprio laudo</span></li>
+            <li><ShieldCheck size={20} strokeWidth={1.75} aria-hidden="true" /><span>Você decide quem pode ver</span></li>
           </ul>
+          <span className="login-seal">{SAFETY_COPY.synthetic}</span>
         </section>
+        <div className="login-side">
         <form className="login-form" onSubmit={submit} noValidate aria-labelledby="login-title" aria-busy={busy}>
           <h2 id="login-title">Entre na sua conta</h2>
           <Input label="E-mail" id="email" type="email" inputMode="email" autoCapitalize="none" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} disabled={busy} error={invalidField === "email" ? error ?? undefined : undefined} required />
@@ -71,19 +74,22 @@ export function Login({ onSubmit, onDemo, initialError = null }: LoginProps) {
           required
         />
 
-        {error && !invalidField && (
-          <p className="login-error" role="alert">
-            <CircleAlert size={20} strokeWidth={1.75} aria-hidden="true" /><span>{error}</span>
-          </p>
-        )}
+        <div className="login-error-slot">
+          {error && !invalidField && (
+            <p className="login-error" role="alert">
+              <CircleAlert size={20} strokeWidth={1.75} aria-hidden="true" /><span>{error}</span>
+            </p>
+          )}
+        </div>
 
         <Button type="submit" disabled={busy} icon={busy ? LoaderCircle : undefined} className={busy ? "login-submit login-submit-busy" : "login-submit"}>
           {busy ? "Entrando…" : "Entrar"}
         </Button>
+      </form>
         <Button variant="link" onClick={onDemo} disabled={busy} className="login-demo">
           Ver demonstração com dados sintéticos
         </Button>
-      </form>
+        </div>
       </div>
     </main>
   );

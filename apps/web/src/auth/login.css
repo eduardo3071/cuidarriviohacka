@@ -1,32 +1,43 @@
-/* Fase 1 — usa somente os tokens aprovados da fundação visual. */
+/* Fase 1 (refeita) — segue o mapa visual global do Login. */
 .login-phase-one {
-  place-items: start center;
-  padding: max(32px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  display: block; min-height: 100dvh; padding: 0;
+  background: linear-gradient(180deg, var(--color-background) 0, var(--color-brand-soft) 320px, var(--color-background) 320px);
 }
-.login-layout { width: 100%; max-width: 1040px; display: grid; gap: 32px; }
-.login-intro { min-width: 0; display: grid; gap: 24px; }
-.login-intro .brand-name { letter-spacing: 0; }
-.login-intro h1 { max-width: 21ch; font-size: 28px; line-height: 1.25; letter-spacing: 0; }
-.login-benefits { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
-.login-benefits li { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: start; gap: 12px; color: var(--color-ink-2); font-size: 16px; line-height: 1.5; }
-.login-benefits svg { color: var(--color-brand); }
-.login-form { min-width: 0; display: grid; align-content: start; gap: 24px; }
-.login-form h2 { margin: 0; font-size: 22px; letter-spacing: 0; }
-.login-form .ds-field > label { font-size: 16px; }
+.login-layout { width: 100%; padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+.login-intro { min-width: 0; }
+.login-intro .brand { height: 32px; color: var(--color-ink); gap: 8px; }
+.login-intro .brand-mark { width: 32px; height: 32px; border-radius: 10px; }
+.login-intro .brand-name { font: 700 22px/1 var(--font-display); letter-spacing: 0; color: var(--color-ink); }
+.login-intro h1 { margin: 24px 0 0; color: var(--color-ink); font: 700 28px/36px var(--font-display); letter-spacing: 0; }
+.login-benefits { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.login-benefits li { display: flex; align-items: flex-start; gap: 10px; min-height: 32px; color: var(--color-ink-2); font: 400 16px/1.5 var(--font); }
+.login-benefits svg { flex: 0 0 auto; margin-top: 2px; color: var(--color-brand); }
+.login-seal { display: flex; width: fit-content; align-items: center; height: 28px; margin: 16px 0 0; padding: 0 12px; border-radius: 999px; background: var(--seal-bg); color: var(--color-amber-text); font: 600 14px/1 var(--font); }
+.login-side { margin-top: 24px; }
+.login-form { min-width: 0; display: grid; padding: 20px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface); box-shadow: none; }
+.login-form h2 { margin: 0 0 20px; color: var(--color-ink); font: 700 22px/1.2 var(--font-display); letter-spacing: 0; }
+.login-form .ds-field + .ds-field { margin-top: 16px; }
+.login-form .ds-field > label { color: var(--color-ink); font: 600 16px/1.4 var(--font); }
+.login-form .ds-field-message { padding: 8px 12px; border-radius: 8px; background: var(--color-urgent-bg); color: var(--color-urgent); }
+.login-error-slot { min-height: 24px; margin: 8px 0; }
+.login-error { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 8px; color: var(--color-urgent); background: var(--color-urgent-bg); font: 500 14px/1.4 var(--font); }
+.login-error svg { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; }
 .login-submit { width: 100%; }
-.login-submit:disabled { opacity: 1; cursor: progress; }
-.login-demo { width: 100%; margin-top: -16px; line-height: 1.5; }
-.login-error { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; margin: 0; padding: 12px; color: var(--color-urgent); background: var(--color-urgent-bg); border-radius: var(--radius-control); font-size: 16px; }
-.login-error svg { margin-top: 2px; }
-.login-submit-busy > svg { animation: login-spin 900ms linear infinite; }
+.login-submit:disabled { cursor: progress; }
+.login-submit-busy, .login-submit-busy:disabled { background: var(--color-brand); color: var(--color-on-brand); }
+.login-submit-busy > svg { color: var(--color-on-brand); animation: login-spin 900ms linear infinite; }
+.login-demo { display: flex; width: 100%; margin-top: 16px; }
 @keyframes login-spin { to { transform: rotate(360deg); } }
 @media (min-width: 1024px) {
-  .login-phase-one { place-items: center; padding: 64px 48px; }
-  .login-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 64px; }
-  .login-intro { gap: 32px; }
-  .login-intro h1 { font-size: 36px; }
-  .login-benefits li { font-size: 17px; }
-  .login-form { border-left: 1px solid var(--color-line); padding: 32px 0 32px 48px; }
-  .login-form h2 { font-size: 26px; }
+  .login-phase-one { background: var(--color-background); }
+  .login-layout { display: grid; grid-template-columns: 640px minmax(0, 1fr); min-height: 100dvh; padding: 0; }
+  .login-intro { position: relative; padding: 64px; background: linear-gradient(180deg, var(--color-background), var(--color-brand-soft)); }
+  .login-intro h1 { max-width: 512px; margin-top: 72px; font: 700 64px/67px var(--font-display); }
+  .login-benefits { margin-top: 32px; gap: 0; }
+  .login-benefits li { min-height: 40px; align-items: center; gap: 12px; font-size: 18px; }
+  .login-benefits svg { width: 24px; height: 24px; margin: 0; }
+  .login-seal { position: absolute; left: 64px; bottom: 64px; display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--seal-bg); color: var(--color-amber-text); font: 600 14px/1 var(--font); }
+  .login-side { margin: 0; display: grid; place-content: center; padding: 32px; }
+  .login-form { width: 440px; padding: 32px; box-shadow: var(--shadow-card); }
 }
 @media (prefers-reduced-motion: reduce) { .login-submit-busy > svg { animation: none; } }
