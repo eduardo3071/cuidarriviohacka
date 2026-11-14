@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     llm_model: str = ""  # vazio -> padrao do adaptador (claude-opus-5-5)
     anthropic_api_key: str = ""  # so no backend/.env; nunca no front nem no git
 
+    # Demonstracao SEM login: /demo/extract e /demo/normalize leem o laudo e devolvem o resultado, sem gravar nada
+    # (nem banco, nem storage). Desligado por padrao: sao rotas abertas e o OCR consome CPU, entao so liga em maquina local
+    # (o scripts/dev.py liga). Nunca use a IA hospedada nessas rotas (custo); so texto do PDF e OCR local.
+    demo_extract_enabled: bool = False
+    demo_rate_per_minute: int = 20  # limite por IP, contra uso abusivo
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

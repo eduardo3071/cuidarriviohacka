@@ -25,6 +25,11 @@ import type { EventKind, HealthData } from "./types";
 import type { Category } from "./data/api";
 import { SAFETY_COPY } from "./lib/safetyCopy";
 import { PitchTour } from "./pitch/PitchTour";
+import { UploadFlow } from "./components/UploadFlow";
+import { config } from "./config";
+import { addExam } from "./demo/addExam";
+import { makeDemoApi } from "./demo/demoApi";
+import { DemoPrivacy, makeDemoPrivacyRest } from "./demo/DemoPrivacy";
 
 /** Exame aberto por padrao na demonstracao (a historia: tres laboratorios, unidades diferentes). */
 export const DEFAULT_BIOMARKER = "Glicemia de jejum";
@@ -36,6 +41,13 @@ export default function App({ source = demoSource }: { source?: DataSource }) {
   const [data, setData] = useState<HealthData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [presenting, setPresenting] = useState(false);
+  // Demonstracao: o envio de laudo roda a leitura REAL na API Python (so se ela estiver configurada) e o resultado entra
+  // na paciente so em memoria; a privacidade e simulada. Nada disso grava em servidor e tudo some ao recarregar.
+  const demoApi = useMemo(
+    () => (config.apiUrl ? makeDemoApi(config.apiUrl, (c) => setData((d) => (d ? addExam(d, c) : d))) : null),
+    [],
+  );
+  const privacyRest = useMemo(() => makeDemoPrivacyRest(), []);
 
   useEffect(() => {
     let alive = true;
@@ -63,7 +75,14 @@ export default function App({ source = demoSource }: { source?: DataSource }) {
       </main>
     );
   if (presenting) return <PitchTour onExit={() => setPresenting(false)} />;
-  return <Dashboard data={data} onPresent={() => setPresenting(true)} />;
+  return (
+    <Dashboard
+      data={data}
+      onPresent={() => setPresenting(true)}
+      upload={demoApi ? ({ goExams }) => <UploadFlow api={demoApi} onConfirmed={() => {}} onViewExams={goExams} /> : undefined}
+      privacy={<DemoPrivacy rest={privacyRest} />}
+    />
+  );
 }
 
 export interface DashboardProps {

@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import documents
+from app.api import demo, documents
 from app.core.config import get_settings
 from app.core.services import ServiceConfigError, Services, build_services
 
@@ -32,6 +32,7 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     app = FastAPI(title="Rivio Hub de Saude API", version="0.2.0", lifespan=lifespan)
     app.state.services = services
+    app.state.settings = settings  # as rotas de demonstracao leem o liga/desliga daqui (e os testes o trocam)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
@@ -40,10 +41,17 @@ def create_app(services: Services | None = None) -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(documents.router)
+    app.include_router(demo.router)  # 404 enquanto DEMO_EXTRACT_ENABLED=false
 
     @app.get("/health", tags=["infra"])
     async def health() -> dict:
-        return {"status": "ok", "ocr_enabled": settings.ocr_enabled, "llm_configured": bool(settings.anthropic_api_key)}
+        s = app.state.settings  # a mesma fonte que as rotas de demonstracao usam
+        return {
+            "status": "ok",
+            "ocr_enabled": s.ocr_enabled,
+            "llm_configured": bool(s.anthropic_api_key),
+            "demo_extract": s.demo_extract_enabled,
+        }
 
     return app
 

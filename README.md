@@ -35,7 +35,8 @@ Não precisa de Render nem de Vercel. O banco, o login e os arquivos continuam n
 
 ```bash
 python scripts/dev.py               # pré-voo + API (http://localhost:8000/docs) + front (http://localhost:5173)
-python scripts/dev.py --offline     # SEM internet: só o front, direto no modo demonstração (dados do próprio app)
+python scripts/dev.py --offline     # SEM internet: front no modo demonstração + API local (leitura real de laudo, sem login)
+python scripts/dev.py --no-ocr      # sem OCR: PDF com texto é lido; foto de laudo não
 python scripts/dev.py --no-api      # só o front (login e dados vão direto ao Supabase)
 python scripts/preflight.py         # só o pré-voo: o que funciona e o que cai no plano B (precisa do venv da API)
 ```

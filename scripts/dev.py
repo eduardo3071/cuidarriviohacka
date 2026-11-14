@@ -1,7 +1,8 @@
 """Sobe a demonstracao inteira NA SUA MAQUINA com um comando (so biblioteca padrao: qualquer Python 3.9+ serve).
 
     python scripts/dev.py              # pre-voo + API (8000) + front (5173)
-    python scripts/dev.py --offline    # SEM internet: so o front, no modo demonstracao (dados do app, sem login)
+    python scripts/dev.py --offline    # SEM internet: front em modo demonstracao + API local (leitura real de laudo, sem login)
+    python scripts/dev.py --no-ocr     # sem OCR (PDF com texto continua sendo lido; foto nao)
     python scripts/dev.py --no-api     # so o front (login e dados vem direto do Supabase; nao precisa da API)
     python scripts/dev.py --skip-preflight
 
@@ -56,8 +57,9 @@ def kill_tree(p: subprocess.Popen) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--offline", action="store_true", help="sem internet: so o front, modo demonstracao")
+    ap.add_argument("--offline", action="store_true", help="sem internet: front em modo demonstracao + API local so com a leitura de laudo")
     ap.add_argument("--no-api", action="store_true", help="nao sobe a API")
+    ap.add_argument("--no-ocr", action="store_true", help="sem OCR: so PDF com texto (foto de laudo nao e lida)")
     ap.add_argument("--skip-preflight", action="store_true")
     args = ap.parse_args()
     if WIN:  # fechar o terminal / Ctrl+Break tambem derrubam tudo com limpeza (e e como os testes param o processo)
@@ -87,9 +89,19 @@ def main() -> int:
         web_env["VITE_SUPABASE_URL"] = ""
         web_env["VITE_SUPABASE_PUBLISHABLE_KEY"] = ""
 
+    # A API local liga as rotas de DEMONSTRACAO (leitura real do laudo sem login: /demo/extract e /demo/normalize) e o OCR
+    # local. Em producao ficam desligadas (DEMO_EXTRACT_ENABLED=false por padrao).
+    api_env = dict(os.environ)
+    api_env["DEMO_EXTRACT_ENABLED"] = "true"
+    api_env["OCR_ENABLED"] = "false" if args.no_ocr else "true"
+    if args.offline:  # sem internet nao ha banco: a API sobe so com a leitura de demonstracao
+        for k in ("DATABASE_URL", "SUPABASE_URL", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY"):
+            api_env[k] = ""
+        web_env.setdefault("VITE_API_URL", f"http://localhost:{API_PORT}")
+
     try:
-        if not (args.offline or args.no_api):
-            start("api", [str(py), "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(API_PORT)], ROOT / "apps" / "api")
+        if not args.no_api:
+            start("api", [str(py), "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(API_PORT)], ROOT / "apps" / "api", api_env)
         start("web", [npm, "run", "dev", "--", "--port", str(WEB_PORT), "--strictPort"], ROOT / "apps" / "web", web_env)
 
         checks = {"web": f"http://localhost:{WEB_PORT}"}

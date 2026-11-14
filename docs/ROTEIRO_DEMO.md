@@ -35,7 +35,9 @@ No painel: **Próximo/Voltar**, ⇄ para mover o painel de lado (no computador e
 Total sugerido: **6 min** (cabe na parte de software de um pitch de 10 min). Os números das falas (resultados, laboratórios, amostras, alertas) vêm dos dados, não são digitados à mão,
 e o passo 10 é honesto sobre os limites (foto/OCR e IA hospedada sem teste real, regras de alerta sem revisão clínica, relógio ainda sem tempo real).
 
-**Limites do modo:** é uma demonstração com dados sintéticos e botões que não gravam nada (o envio de laudo e a liberação de acesso aparecem como telas, mas só o roteiro ao vivo abaixo exercita o banco de verdade).
+**Limites do modo:** é uma demonstração com dados sintéticos e nada é gravado em banco. Com a API local no ar (`python scripts/dev.py`), as abas **Enviar laudo** e **Privacidade e acessos** funcionam de verdade na tela de demonstração:
+- **Enviar laudo** roda a leitura REAL em Python (texto do PDF; OCR/OpenCV para foto, ~20 s). Sugestões: `data/synthetic/marta/exams/demo_upload_2026-11.pdf` e `aurora_2023_foto.jpg`. As leituras confirmadas entram na paciente e na linha do tempo, só na memória do navegador (somem ao recarregar).
+- **Privacidade e acessos** é simulada (médicos fictícios, um acesso ativo e histórico de aberturas); liberar, revogar e o registro funcionam como na tela real, mas só na memória. Só o roteiro ao vivo abaixo exercita o banco de verdade.
 No celular o painel cobre parte da tela; recolha com ⌄ para ver tudo.
 
 ## Antes de subir ao palco (15 min antes)
@@ -79,6 +81,7 @@ No celular o painel cobre parte da tela; recolha com ⌄ para ver tudo.
 | Sintoma | Causa provável | O que fazer |
 |---|---|---|
 | Login responde "E-mail ou senha incorretos." | Senha não definida ou digitada errada | Redefinir com `set_demo_password.py` |
+| "Enviar laudo" na demonstração dá erro de leitura/API | API local fora do ar ou sem `DEMO_EXTRACT_ENABLED` | Suba com `python scripts/dev.py` (liga as rotas `/demo/*` e o OCR). Foto leva ~20 s no OCR; PDF é instantâneo |
 | Telas em branco após login | Sem internet / Supabase fora | `Ver demonstração` ou `dev.py --offline` |
 | *Enviar laudo* diz "Não consegui falar com a API" | API não subiu (ou usou `--no-api`) | `python scripts/dev.py` (sem `--no-api`); veja `.dev-logs/api.log` |
 | Envio diz "já foi enviado e guardado antes" | O laudo da demo já está no histórico | `python scripts/reset_demo_upload.py` e envie de novo |
