@@ -57,3 +57,16 @@ export function evidenceChartOptions(ev: Evidence): ChartOptions {
     unitLabel: meta?.unit ?? first?.unit ?? "",
   };
 }
+
+/** Resume amostras do relógio em média por dia (data local do registro), para não desenhar centenas de pontos. */
+export function dailyMean(samples: WearableSample[]): { t: string; v: number }[] {
+  const days = new Map<string, { sum: number; n: number }>();
+  for (const s of samples) {
+    const d = s.t.slice(0, 10);
+    const acc = days.get(d) ?? { sum: 0, n: 0 };
+    acc.sum += s.value;
+    acc.n += 1;
+    days.set(d, acc);
+  }
+  return [...days.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([d, { sum, n }]) => ({ t: `${d}T12:00:00Z`, v: sum / n }));
+}

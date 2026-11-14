@@ -1,5 +1,5 @@
 import { fmtDate, fmtNum } from "../lib/format";
-import { groupSamples, METRIC_META } from "../lib/wearables";
+import { dailyMean, groupSamples, METRIC_META } from "../lib/wearables";
 import type { EvidenceSeries, WearableSample } from "../types";
 import { MiniChart } from "./MiniChart";
 
@@ -32,7 +32,7 @@ export function WearablesPanel({ samples }: { samples: WearableSample[] }) {
         const series: EvidenceSeries[] = card.metrics.map((m) => ({
           metric: m,
           unit: METRIC_META[m]?.unit ?? "",
-          points: (by.get(m) ?? []).map((s) => ({ t: s.t, v: s.value })),
+          points: card.mode === "events" ? (by.get(m) ?? []).map((s) => ({ t: s.t, v: s.value })) : dailyMean(by.get(m) ?? []),
         }));
         const first = series[0]!;
         const last = first.points[first.points.length - 1];

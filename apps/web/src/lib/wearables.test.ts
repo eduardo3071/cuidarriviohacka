@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import demo from "../demo/marta.json";
 import type { Alert, HealthData } from "../types";
-import { attentionCount, evidenceChartOptions, groupSamples, METRIC_META, sortAlerts } from "./wearables";
+import { attentionCount, dailyMean, evidenceChartOptions, groupSamples, METRIC_META, sortAlerts } from "./wearables";
 
 const data = demo as unknown as HealthData;
 
@@ -37,5 +37,15 @@ describe("wearables", () => {
     expect(evidenceChartOptions(by("irregular_rhythm")).mode).toBe("events");
     expect(evidenceChartOptions(by("sleep_reduction"))).toMatchObject({ mode: "line", divisor: 60, unitLabel: "h" });
     expect(evidenceChartOptions(by("high_blood_pressure"))).toMatchObject({ mode: "line", divisor: 1, unitLabel: "mmHg" });
+  });
+
+  it("resume o relógio em média por dia: no máximo um ponto por dia", () => {
+    const pts = dailyMean([
+      { t: "2026-01-01T08:00:00Z", metric: "resting_hr", value: 60, unit: "bpm" },
+      { t: "2026-01-01T20:00:00Z", metric: "resting_hr", value: 70, unit: "bpm" },
+      { t: "2026-01-02T08:00:00Z", metric: "resting_hr", value: 58, unit: "bpm" },
+    ]);
+    expect(pts.map((p) => p.v)).toEqual([65, 58]);
+    expect(data.wearables.length).toBe(489);
   });
 });
