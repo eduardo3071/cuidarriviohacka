@@ -1,7 +1,6 @@
 import { LogOut, Play, UserRound, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import "../pitch/pitch.css";
-import logo from "../assets/cuidar-logo.png.asset.json";
 import { SAFETY_COPY } from "../lib/safetyCopy";
 import { BottomNav, NAV_ITEMS, type Section } from "./BottomNav";
 import { Toast } from "./ui";
@@ -11,7 +10,7 @@ const SIDE_LABEL: Partial<Record<Section, string>> = { enviar: "Enviar laudo", a
 export function Brand() {
   return (
     <span className="brand">
-      <img className="brand-logo" src={logo.url} alt="Cuidar+" />
+      <img className="brand-logo" src="/cuidar-logo.png" alt="Cuidar+" />
     </span>
   );
 }
