@@ -157,3 +157,13 @@
 @media (min-width: 1024px) { .rt td { white-space: normal; padding: 6px 6px; } .rt th { padding: 0 6px 8px; } .rt td:last-child { white-space: nowrap; } }
 .rt-wrap, .state-badge { position: relative; }
 @media (min-width: 1024px) { .bm .bm-value-m { display: none; } }
+
+/* Fase 6: no celular, o gráfico vem logo abaixo do título, de largura total, sem precisar rolar. */
+@media (max-width: 1023px) {
+  .exams.detail-open .main { display: flex; flex-direction: column; gap: 12px; }
+  .exams .main .exam-head h2 { margin: 0; }
+  .exams .main .chart-box { order: 1; margin-inline: -16px; border-radius: 0; border-left: 0; border-right: 0; padding-inline: 8px; }
+  .exams .main .highlight { order: 2; }
+  .exams .main .exam-note { order: 3; margin: 0; }
+  .exams .main .exam-cols { order: 4; }
+}

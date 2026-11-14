@@ -1,6 +1,6 @@
 /* Fase 5B: visão do médico (somente leitura). */
 .doctor-nav { display: none !important; }
-.dr-strip { display: flex; align-items: center; gap: 8px; min-height: 56px; box-sizing: border-box; padding: 8px 16px; background: var(--color-info-bg); color: var(--color-info); font: 600 14px/1.35 var(--font); }
+.dr-strip { display: flex; align-items: center; gap: 8px; min-height: 56px; box-sizing: border-box; padding: 8px 16px; background: var(--color-info-bg); color: var(--color-info); font: 600 16px/1.35 var(--font); }
 .dr-strip svg { flex: none; }
 .dr .caption, .drp .caption { font-size: 14px; color: var(--color-ink-2); margin: 0; }
 .dr-back, .dr-all { min-height: 44px; display: inline-flex; align-items: center; gap: 2px; padding: 0; border: 0; background: none; color: var(--color-brand); font: 600 16px var(--font); cursor: pointer; justify-self: start; }

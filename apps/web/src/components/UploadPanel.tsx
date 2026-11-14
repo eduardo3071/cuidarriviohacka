@@ -1,5 +1,5 @@
 import { AlertCircle, Camera, Check, Lightbulb, Upload } from "lucide-react";
-import { useRef, useState, type DragEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
 import type { ConfirmResult } from "../data/documents";
 import { SAFETY_COPY } from "../lib/safetyCopy";
 import { UploadSteps } from "./UploadSteps";
@@ -20,6 +20,8 @@ export interface UploadPanelProps {
   review?: ReactNode;
   /** Leva para a aba Exames depois de guardar. */
   onViewExams?: () => void;
+  /** Só para a vitrine /celular: abre direto a prévia de uma foto. */
+  initialPhoto?: string;
 }
 
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,.pdf,.jpg,.jpeg,.png,.webp";
@@ -27,10 +29,19 @@ const FORMATS = "PDF, JPEG, PNG ou WebP, até 15 MB";
 const STEP_INDEX: Record<UploadStep, number> = { idle: 0, error: 0, working: 1, review: 2, done: 3 };
 
 /** Enviar laudo (puramente visual): escolher arquivo -> lendo -> conferir -> guardado. */
-export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage, result, duplicate, review, onViewExams }: UploadPanelProps) {
+export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage, result, duplicate, review, onViewExams, initialPhoto }: UploadPanelProps) {
   const file = useRef<HTMLInputElement>(null);
   const camera = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
+  // foto da câmera: primeiro a prévia, depois "Usar esta foto" ou "Tirar outra"
+  const [photo, setPhoto] = useState<{ file: File | null; url: string } | null>(initialPhoto ? { file: null, url: initialPhoto } : null);
+  useEffect(() => () => { if (photo?.file) URL.revokeObjectURL(photo.url); }, [photo]);
+  const shoot = (input: HTMLInputElement | null) => {
+    const f = input?.files?.[0];
+    if (f) setPhoto({ file: f, url: URL.createObjectURL(f) });
+    if (input) input.value = "";
+  };
+  const usePhoto = () => { if (photo?.file) onFile(photo.file); setPhoto(null); };
   const pick = (input: HTMLInputElement | null) => {
     const f = input?.files?.[0];
     if (f) onFile(f);
@@ -52,7 +63,22 @@ export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage,
 
       {step === "review" && review}
 
+      {(step === "idle" || step === "error") && photo && (
+        <div className="up-photo">
+          <h3 className="sec-title">Confira a foto</h3>
+          <img src={photo.url} alt="Prévia da foto do laudo" className="up-photo-img" />
+          <p className="caption">Veja se a página inteira aparece e se dá para ler os números.</p>
+          <div className="up-photo-actions">
+            <Button className="up-big" icon={Check} onClick={usePhoto}>Usar esta foto</Button>
+            <Button className="up-big" variant="secondary" icon={Camera} onClick={() => camera.current?.click()}>Tirar outra</Button>
+          </div>
+        </div>
+      )}
       {(step === "idle" || step === "error") && (
+        <input ref={camera} className="sr-only" tabIndex={-1} aria-hidden="true" type="file" accept="image/*" capture="environment" onChange={(e) => shoot(e.currentTarget)} />
+      )}
+
+      {(step === "idle" || step === "error") && !photo && (
         <div className="up-pick">
           <p className="up-lead">{SAFETY_COPY.upload}</p>
           {step === "error" && (
@@ -86,7 +112,6 @@ export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage,
             <p>Dica de foto: boa luz, a página inteira, sem sombra.</p>
           </div>
           <input ref={file} className="sr-only" tabIndex={-1} aria-hidden="true" type="file" accept={ACCEPT} onChange={(e) => pick(e.currentTarget)} />
-          <input ref={camera} className="sr-only" tabIndex={-1} aria-hidden="true" type="file" accept="image/*" capture="environment" onChange={(e) => pick(e.currentTarget)} />
         </div>
       )}
 

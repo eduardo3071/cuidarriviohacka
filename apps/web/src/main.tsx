@@ -6,10 +6,18 @@ import "./foundation.css";
 import "./visual-map.css";
 
 const Root = lazy(() => import("./Root"));
-const styleGuide = window.location.pathname.replace(/\/$/, "") === "/guia-de-estilo";
+const Celular = lazy(() => import("./celular/Celular").then((m) => ({ default: m.Celular })));
+const ScreenPreview = lazy(() => import("./celular/ScreenPreview").then((m) => ({ default: m.ScreenPreview })));
+const path = window.location.pathname.replace(/\/$/, "");
+const styleGuide = path === "/guia-de-estilo";
+const screen = path === "/celular/tela" ? new URLSearchParams(window.location.search).get("t") ?? "inicio" : null;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {styleGuide ? <StyleGuide /> : <Suspense fallback={<p>Carregando…</p>}><Root /></Suspense>}
+    {styleGuide ? <StyleGuide /> : (
+      <Suspense fallback={<p>Carregando…</p>}>
+        {screen ? <ScreenPreview screen={screen} /> : path === "/celular" ? <Celular /> : <Root />}
+      </Suspense>
+    )}
   </StrictMode>,
 );

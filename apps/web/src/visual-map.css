@@ -143,8 +143,8 @@ body { font: 400 16px/1.5 var(--font); color: var(--color-ink); background: var(
 .ruler-dot { width: 20px; height: 20px; border: 3px solid var(--color-surface); }
 
 /* Controle segmentado (abas) */
-.ds-tabs, .segmented { min-height: 48px; padding: 4px; gap: 4px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-surface-2); }
-.ds-tab, .segmented button { min-height: 40px; height: 40px; border-radius: 8px; color: var(--color-ink-2); font: 500 16px var(--font); background: transparent; box-shadow: none; }
+.ds-tabs, .segmented { min-height: 52px; padding: 4px; gap: 4px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-surface-2); }
+.ds-tab, .segmented button { min-height: 44px; height: 44px; border-radius: 8px; color: var(--color-ink-2); font: 500 16px var(--font); background: transparent; box-shadow: none; }
 .ds-tab[aria-selected="true"], .segmented button[aria-selected="true"] { background: var(--color-surface); color: var(--color-ink); font-weight: 600; box-shadow: var(--shadow-card); }
 
 /* Chip de filtro */

@@ -111,3 +111,11 @@
   .rv-side { display: block; position: sticky; top: 96px; padding: 12px; }
   .rv-side .caption { margin: 8px 0 0; }
 }
+
+/* Prévia da foto (câmera traseira) */
+.up-photo { display: grid; gap: 12px; max-width: 520px; margin: 0 auto; width: 100%; }
+.up-photo .sec-title { margin: 8px 0 0; }
+.up-photo-img { width: 100%; max-height: min(30dvh, 340px); object-fit: contain; border-radius: 16px; border: 1px solid var(--color-line); background: var(--color-surface-2); }
+.up-photo .caption { margin: 0; }
+.up-photo-actions { display: grid; gap: 12px; position: sticky; bottom: calc(var(--nav-h, 64px) + env(safe-area-inset-bottom) + 8px); }
+@media (min-width: 1024px) { .up-photo-actions { position: static; grid-template-columns: 1fr 1fr; } }

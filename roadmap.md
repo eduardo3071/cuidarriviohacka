@@ -35,3 +35,4 @@
 
 - [x] Meus pacientes em cartões; resumo clínico com faixa de somente leitura, 4 seções (acordeão no celular), seções bloqueadas e "Ver todos os exames".
 - [ ] Testar com conta real de médico.
+- [x] Fase 6: revisão para celular e página /celular

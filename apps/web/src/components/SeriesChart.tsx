@@ -75,7 +75,7 @@ export function SeriesChart({ series, labIndex, selectedKey, onSelect, onOpen, h
               {(p.flag === "above" || p.flag === "below") && <circle className={`point-state-ring ring-${p.flag}`} cx={px} cy={py} r={9} />}
               {selected && <circle className="selection-ring" cx={px} cy={py} r={13} />}
               <Marker lab={idx} cx={px} cy={py} />
-              <circle className="hit" cx={px} cy={py} r={22} />
+              <circle className="hit" cx={px} cy={py} r={26} />
             </g>
           );
         })}
