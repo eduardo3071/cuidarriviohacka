@@ -1,3 +1,5 @@
+import { ErrorState } from "./components/ui";
+import { ScreenSkeleton } from "./components/ScreenSkeleton";
 import { ChevronLeft, Eye } from "lucide-react";
 import { AppShell } from "./components/AppShell";
 import { DoctorSummary, ReadOnlyStrip } from "./components/DoctorSummary";
@@ -9,7 +11,7 @@ import { useAuth } from "./auth/useAuth";
 import { PatientList } from "./components/PatientList";
 import { PrivacyView } from "./components/PrivacyView";
 import { UploadFlow } from "./components/UploadFlow";
-import { ConnectionNotice, Loading } from "./components/ConnectionNotice";
+import { ConnectionNotice } from "./components/ConnectionNotice";
 import { makeApiFetch } from "./data/apiFetch";
 import type { ApiFetch } from "./data/documents";
 import { config, isConfigured } from "./config";
@@ -72,7 +74,7 @@ function Status({ error, children }: { error: string | null; children: ReactNode
   return (
     <main className="app">
       <ConnectionNotice />
-      {error ? <p role="alert">{error}</p> : typeof children === "string" && children.startsWith("Carregando") ? <Loading /> : <p>{children}</p>}
+      {error ? <div className="screen-loading"><ErrorState title={error} description="Confira a internet e tente de novo." onRetry={() => window.location.reload()} /></div> : typeof children === "string" && children.startsWith("Carregando") ? <ScreenSkeleton /> : <p>{children}</p>}
     </main>
   );
 }

@@ -1,9 +1,9 @@
-import { AlertCircle, Camera, Check, Lightbulb, Upload } from "lucide-react";
+import { Camera, Check, Lightbulb, Upload } from "lucide-react";
 import { useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
 import type { ConfirmResult } from "../data/documents";
 import { SAFETY_COPY } from "../lib/safetyCopy";
 import { UploadSteps } from "./UploadSteps";
-import { Button, StateBadge } from "./ui";
+import { Button, ErrorState, StateBadge } from "./ui";
 import "./upload.css";
 
 export type UploadStep = "idle" | "working" | "review" | "done" | "error";
@@ -82,13 +82,7 @@ export function UploadPanel({ step, onFile, onReset, workingLabel, errorMessage,
         <div className="up-pick">
           <p className="up-lead">{SAFETY_COPY.upload}</p>
           {step === "error" && (
-            <div role="alert" className="up-error">
-              <AlertCircle size={24} strokeWidth={1.75} aria-hidden="true" />
-              <div>
-                <p>{errorMessage}</p>
-                <Button variant="secondary" onClick={onReset}>Tentar de novo</Button>
-              </div>
-            </div>
+            <ErrorState title={errorMessage ?? "Não foi possível ler o laudo."} description="Confira o arquivo ou a internet e tente de novo." onRetry={onReset} />
           )}
           <div className="up-mobile">
             <Button className="up-big" icon={Camera} onClick={() => camera.current?.click()}>Fotografar o laudo</Button>

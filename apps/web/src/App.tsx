@@ -1,3 +1,5 @@
+import { Button, EmptyState, ErrorState } from "./components/ui";
+import { ScreenSkeleton } from "./components/ScreenSkeleton";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertsNote, AlertsPanel } from "./components/AlertsPanel";
 import { BiomarkerList } from "./components/BiomarkerList";
@@ -6,7 +8,7 @@ import { RangeRuler } from "./components/RangeRuler";
 import { rangeText, StateChip } from "./components/StateChip";
 import { Bell, ChevronLeft, Upload } from "lucide-react";
 import "./dashboard.css";
-import { ConnectionNotice, Loading } from "./components/ConnectionNotice";
+import { ConnectionNotice } from "./components/ConnectionNotice";
 import { DataTable } from "./components/DataTable";
 import { PointDetail } from "./components/PointDetail";
 import { SeriesChart } from "./components/SeriesChart";
@@ -48,14 +50,14 @@ export default function App({ source = demoSource }: { source?: DataSource }) {
     return (
       <main className="app">
         <ConnectionNotice />
-        <p role="alert">{error}</p>
+        <div className="screen-loading"><ErrorState title="Não foi possível carregar os dados." description="Confira a internet e tente de novo." onRetry={() => window.location.reload()} /></div>
       </main>
     );
   if (!data)
     return (
       <main className="app">
         <ConnectionNotice />
-        <Loading />
+        <ScreenSkeleton />
       </main>
     );
   return <Dashboard data={data} />;
@@ -179,7 +181,7 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
               <h3 id="h-fora">Fora da faixa do laudo</h3>
               <p className="caption">Comparado com a faixa impressa no próprio laudo. Converse com um médico sobre eles.</p>
               {attentionExams.length === 0 ? (
-                <p>Nenhum exame recente está fora da faixa do próprio laudo.</p>
+                <EmptyState title="Nenhum exame recente está fora da faixa do próprio laudo." description="Os resultados continuam guardados em Exames." action={<Button variant="secondary" onClick={() => go("exames")}>Ver meus exames</Button>} />
               ) : (
                 <ul className="out-list">
                   {attentionExams.slice(0, 4).map((s) => {
@@ -270,12 +272,12 @@ export function Dashboard({ data, initialView = "inicio", initialExamTab = "resu
                 )}
               </section>
             </div>
-          ) : <p>Nenhum resultado disponível ainda.</p>}
+          ) : <EmptyState title="Nenhum resultado disponível ainda." description={readOnly ? undefined : "Envie um laudo para ver seus resultados aqui."} action={readOnly ? undefined : <Button onClick={() => go("enviar")}>Enviar um laudo</Button>} />}
         </main>
       )}
 
       {readOnly && shown === "inicio" && (!sectionAvailable || !current) && (
-        <main className="screen"><h2>Início</h2><p>{!sectionAvailable ? SAFETY_COPY.unavailable : "Nenhum resultado disponível ainda."}</p></main>
+        <main className="screen"><h2>Início</h2>{!sectionAvailable ? <p>{SAFETY_COPY.unavailable}</p> : <EmptyState title="Nenhum resultado disponível ainda." />}</main>
       )}
 
       {shown === "alertas" && (

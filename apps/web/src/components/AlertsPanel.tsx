@@ -1,3 +1,4 @@
+import { EmptyState } from "./ui";
 import { ChevronRight, Info, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { fmtDate } from "../lib/format";
@@ -47,9 +48,7 @@ export function AlertsPanel({ alerts }: { alerts: Alert[] }) {
   const [sheet, setSheet] = useState<Alert | null>(null);
   if (alerts.length === 0)
     return (
-      <p className="muted" role="status">
-        Nenhum alerta no momento. Os sinais do relógio estão dentro do seu padrão.
-      </p>
+      <EmptyState title="Nenhum alerta no momento." description="Os sinais do relógio estão dentro do seu padrão." />
     );
   const current = sorted.find((a) => keyOf(a) === selected) ?? sorted[0]!;
   const open = (a: Alert) => {

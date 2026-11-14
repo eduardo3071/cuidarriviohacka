@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   CircleAlert,
   Info,
-  Inbox,
   Minus,
   TriangleAlert,
   X,
@@ -179,32 +178,48 @@ export function Toast({
   );
 }
 
-export function Skeleton({ lines = 3, className }: { lines?: number; className?: string }) {
+/** Carregando: blocos com a altura do conteúdo final, sem animação em loop. */
+export function Skeleton({ lines = 3, className, heights, label = "Carregando conteúdo" }: { lines?: number; className?: string; heights?: number[]; label?: string }) {
+  const hs = heights ?? Array.from({ length: lines }, (_, i) => (i === 0 ? 28 : 16));
   return (
-    <div className={cx("ds-skeleton", className)} aria-label="Carregando conteúdo" role="status">
-      {Array.from({ length: lines }, (_, index) => <span key={index} style={{ width: index === lines - 1 ? "64%" : "100%" }} />)}
+    <div className={cx("ds-skeleton", className)} aria-label={label} role="status">
+      {hs.map((h, index) => <span key={index} style={{ height: h, width: !heights && index === hs.length - 1 && hs.length > 1 ? "64%" : "100%" }} />)}
     </div>
   );
 }
 
-export function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
+/** O fio curvo da marca (120×40). */
+export function Thread() {
   return (
-    <div className="ds-state ds-empty-state">
-      <span className="ds-state-icon"><Inbox size={24} strokeWidth={1.75} aria-hidden="true" /></span>
-      <h3>{title}</h3>
-      <p>{description}</p>
-      {action}
+    <svg className="ds-thread" width="120" height="40" viewBox="0 0 120 40" aria-hidden="true" focusable="false">
+      <path d="M4 30 C 28 30, 30 10, 60 10 S 92 30, 116 18" fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="116" cy="18" r="4" fill="var(--color-brand)" />
+    </svg>
+  );
+}
+
+/** Estado vazio padrão: fio, uma frase, apoio e (opcional) uma ação. */
+export function EmptyState({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
+  return (
+    <div className="ds-empty" role="status">
+      <Thread />
+      <p className="ds-empty-title">{title}</p>
+      {description && <p className="ds-empty-text">{description}</p>}
+      {action && <div className="ds-empty-action">{action}</div>}
     </div>
   );
 }
 
-export function ErrorState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
+/** Estado de erro padrão: o que houve, o que fazer e "Tentar de novo". */
+export function ErrorState({ title, description, onRetry }: { title: string; description?: string; onRetry?: () => void }) {
   return (
-    <div className="ds-state ds-error-state">
-      <span className="ds-state-icon"><CircleAlert size={24} strokeWidth={1.75} aria-hidden="true" /></span>
-      <h3>{title}</h3>
-      <p>{description}</p>
-      {action}
+    <div className="ds-error" role="alert">
+      <CircleAlert size={24} strokeWidth={1.75} aria-hidden="true" />
+      <div>
+        <p className="ds-error-title">{title}</p>
+        {description && <p className="ds-error-text">{description}</p>}
+        {onRetry && <Button variant="secondary" className="ds-error-retry" onClick={onRetry}>Tentar de novo</Button>}
+      </div>
     </div>
   );
 }

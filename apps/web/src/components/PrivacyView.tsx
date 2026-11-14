@@ -1,9 +1,9 @@
 import { Check, ChevronDown, ChevronLeft, Clock, FlaskConical, History, Watch, type LucideIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CATEGORIES, CATEGORY_LABEL, consentStatus, type AccessEntry, type Category, type Consent, type Doctor } from "../data/api";
 import { SAFETY_COPY } from "../lib/safetyCopy";
 import { Sheet } from "./Sheet";
-import { Button } from "./ui";
+import { Button, EmptyState, ErrorState, Toast } from "./ui";
 import "./privacy.css";
 
 const DAYS = [
@@ -68,7 +68,7 @@ function GrantWizard({ doctors, now, busy, error, mode, onCancel, onSubmit }: {
   const bodies = [
     <fieldset key="0" className="pv-q"><legend className="sec-title">Para qual médico?</legend>
       <div className="pv-opts" role="radiogroup">
-        {doctors.length === 0 && <p className="caption">Nenhum médico disponível.</p>}
+        {doctors.length === 0 && <EmptyState title="Nenhum médico disponível." />}
         {doctors.map((d) => (
           <label key={d.id} className={opt(d.id === doctorId)}>
             <input type="radio" name={`doc-${mode}`} className="sr-only" checked={d.id === doctorId} onChange={() => setDoctorId(d.id)} />
@@ -107,7 +107,7 @@ function GrantWizard({ doctors, now, busy, error, mode, onCancel, onSubmit }: {
     </div>,
   ];
   const err = localError ?? error;
-  const errEl = err && <p className="pv-err" role="alert">{err}</p>;
+  const errEl = err && <ErrorState title={err} description="Confira a internet e tente de novo." />;
 
   if (mode === "stacked")
     return (
@@ -149,6 +149,8 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
   const [toRevoke, setToRevoke] = useState<Consent | null>(null);
   const [wizard, setWizard] = useState(false);
   const [wizKey, setWizKey] = useState(0);
+  const [done, setDone] = useState<{ title: string; message: string } | null>(null);
+  useEffect(() => { if (!done) return; const t = setTimeout(() => setDone(null), 6000); return () => clearTimeout(t); }, [done]);
 
   const doc = (id: string) => doctors.find((d) => d.id === id);
   const doctorName = (id: string) => doc(id)?.full_name ?? "Médico";
@@ -160,7 +162,7 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
     setLocalError(null);
     try { await fn(); return true; } catch (e) { setLocalError(e instanceof Error ? e.message : "Não foi possível concluir."); return false; } finally { setBusy(false); }
   }
-  const grant = async (g: GrantInput) => { if (await run(() => onGrant(g))) { setWizard(false); setWizKey((k) => k + 1); } };
+  const grant = async (g: GrantInput) => { if (await run(() => onGrant(g))) { setWizard(false); setWizKey((k) => k + 1); setDone({ title: "Acesso liberado", message: `${doctorName(g.doctorId)} pode ver o que você escolheu.` }); } };
   const shownError = localError ?? error;
 
   return (
@@ -171,7 +173,7 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
           <h3 className="sec-title">Quem pode ver os seus dados agora</h3>
           <p className="caption">Nada é compartilhado sem a sua permissão. Você escolhe o médico, o que ele vê e por quanto tempo.</p>
           {active.length === 0 ? (
-            <p className="pv-empty">Nenhum médico tem acesso agora.</p>
+            <EmptyState title="Nenhum médico tem acesso agora." description="Use “Liberar para um médico” quando quiser compartilhar." />
           ) : (
             <ul className="pv-list">
               {active.map((c) => (
@@ -187,12 +189,12 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
               ))}
             </ul>
           )}
-          {shownError && !wizard && <p className="pv-err" role="alert">{shownError}</p>}
+          {shownError && !wizard && <ErrorState title={shownError} description="Confira a internet e tente de novo." />}
           <Button className="pv-open" onClick={() => setWizard(true)}>Liberar para um médico</Button>
 
           <h3 className="sec-title">Quem abriu os seus dados</h3>
           {log.length === 0 ? (
-            <p className="pv-empty">Nenhum acesso registrado ainda.</p>
+            <EmptyState title="Nenhum acesso registrado ainda." description="Cada vez que um médico abrir seus dados, aparece aqui." />
           ) : (
             <ul className="pv-list">
               {log.map((a) => (
@@ -227,11 +229,12 @@ export function PrivacyView({ doctors, consents, log, onGrant, onRevoke, now = n
           <div className="pv-confirm">
             <p className="caption">{doctorName(toRevoke.doctor_id)} · {toRevoke.categories.map(catShort).join(", ")}</p>
             <p>{SAFETY_COPY.revoke}</p>
-            <Button variant="danger-solid" disabled={busy} onClick={() => { const id = toRevoke.id; setToRevoke(null); void run(() => onRevoke(id)); }}>Revogar agora</Button>
+            <Button variant="danger-solid" disabled={busy} onClick={() => { const id = toRevoke.id; const who = doctorName(toRevoke.doctor_id); setToRevoke(null); void run(() => onRevoke(id)).then((ok) => ok && setDone({ title: "Acesso revogado", message: `${who} não vê mais os seus dados.` })); }}>Revogar agora</Button>
             <Button variant="link" data-autofocus onClick={() => setToRevoke(null)}>Cancelar</Button>
           </div>
         )}
       </Sheet>
+      {done && <div className="toast-region"><Toast tone="success" title={done.title} message={done.message} onClose={() => setDone(null)} /></div>}
     </div>
   );
 }

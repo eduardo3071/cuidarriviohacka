@@ -4,6 +4,7 @@ import { StyleGuide } from "./style-guide/StyleGuide";
 import "./styles.css";
 import "./foundation.css";
 import "./visual-map.css";
+import "./polish.css";
 
 const Root = lazy(() => import("./Root"));
 const Celular = lazy(() => import("./celular/Celular").then((m) => ({ default: m.Celular })));

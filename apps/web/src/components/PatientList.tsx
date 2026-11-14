@@ -1,4 +1,5 @@
-import { Clock, FlaskConical, History, Lock, Watch, type LucideIcon } from "lucide-react";
+import { EmptyState } from "./ui";
+import { Clock, FlaskConical, History, Watch, type LucideIcon } from "lucide-react";
 import type { Category, MyPatient } from "../data/api";
 import { Button } from "./ui";
 import "./privacy.css";
@@ -15,7 +16,7 @@ export function PatientList({ patients, onOpen }: { patients: MyPatient[]; onOpe
     <main className="screen drp" aria-labelledby="drp-h">
       <h2 id="drp-h" className="page-title">Meus pacientes</h2>
       {patients.length === 0 ? (
-        <div className="drp-empty"><Lock size={32} strokeWidth={1.75} aria-hidden="true" /><p>Nenhum paciente liberou acesso a você no momento.</p></div>
+        <EmptyState title="Nenhum paciente liberou acesso a você no momento." description="Quando um paciente liberar, ele aparece aqui." />
       ) : (
         <ul className="drp-list">
           {patients.map((p) => (

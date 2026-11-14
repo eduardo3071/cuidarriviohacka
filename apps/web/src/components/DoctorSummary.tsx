@@ -9,7 +9,7 @@ import type { HealthData } from "../types";
 import { RangeRuler } from "./RangeRuler";
 import { SeriesChart } from "./SeriesChart";
 import { StateChip } from "./StateChip";
-import { StateBadge } from "./ui";
+import { EmptyState, StateBadge } from "./ui";
 import { WearablesPanel } from "./WearablesPanel";
 import "./phase3.css";
 import "./doctor.css";
@@ -60,7 +60,7 @@ export function DoctorSummary({ data, categories, onBack, onAll, now = new Date(
   const p = data.patient;
   const meta = [p.birth_date ? `${ageOf(p.birth_date, now)} anos` : null, p.sex ? SEX[p.sex] ?? p.sex : null].filter(Boolean).join(" · ");
 
-  const outBody = !can("exams") ? <Locked /> : out.length === 0 ? <p className="caption">Nenhum resultado recente fora da faixa do laudo.</p> : (
+  const outBody = !can("exams") ? <Locked /> : out.length === 0 ? <EmptyState title="Nenhum resultado recente fora da faixa do laudo." /> : (
     <ul className="dr-out">
       {out.map((s) => {
         const sum = summarize(s);
@@ -109,7 +109,7 @@ export function DoctorSummary({ data, categories, onBack, onAll, now = new Date(
     </>
   );
 
-  const timeBody = !can("history") ? <Locked /> : events.length === 0 ? <p className="caption">Nenhum evento registrado.</p> : (
+  const timeBody = !can("history") ? <Locked /> : events.length === 0 ? <EmptyState title="Nenhum evento registrado." /> : (
     <ol className="tl-list">
       {events.map((e, i) => (
         <li key={`${e.event_date}|${e.title}|${i}`} className={`tl-ev${e.kind === "alert" ? " is-alert" : ""}`}>

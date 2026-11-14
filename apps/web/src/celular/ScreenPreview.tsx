@@ -6,6 +6,8 @@ import { DoctorSummary, ReadOnlyStrip } from "../components/DoctorSummary";
 import { PatientList } from "../components/PatientList";
 import { PrivacyView } from "../components/PrivacyView";
 import { UploadPanel } from "../components/UploadPanel";
+import { Button, EmptyState, ErrorState } from "../components/ui";
+import { ScreenSkeleton } from "../components/ScreenSkeleton";
 import demo from "../demo/marta.json";
 import type { HealthData } from "../types";
 import type { Category } from "../data/api";
@@ -41,6 +43,15 @@ export function ScreenPreview({ screen }: { screen: string }) {
         {strip}
         <DoctorSummary data={data} categories={all} onBack={() => {}} onAll={() => {}} now={now} />
       </AppShell>
+    );
+    case "estados": return (
+      <Dashboard data={data} initialView="acessos" privacy={
+        <main className="screen" style={{ display: "grid", gap: 16 }}>
+          <h2 className="page-title">Estados padrão</h2>
+          <EmptyState title="Nenhum acesso registrado ainda." description="Cada vez que um médico abrir seus dados, aparece aqui." action={<Button variant="secondary">Ver meus exames</Button>} />
+          <ErrorState title="Não foi possível carregar os dados." description="Confira a internet e tente de novo." onRetry={() => {}} />
+          <ScreenSkeleton />
+        </main>} />
     );
     default: return <Dashboard data={data} initialView="inicio" />;
   }

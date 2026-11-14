@@ -1,3 +1,4 @@
+import { Button, EmptyState } from "./ui";
 import { Bell, CalendarCheck, FlaskConical, Pill, Syringe, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { describeEvent, eventDateLabel, groupByYear, KIND_LABEL } from "../lib/timeline";
@@ -47,7 +48,7 @@ export function Timeline({ events, hidden, onToggle, tabs }: TimelineProps) {
         </div>
       </div>
       {groups.length === 0 ? (
-        <p className="muted">Nenhum evento para os tipos escolhidos.</p>
+        <EmptyState title="Nenhum evento para os tipos escolhidos." description="Escolha outros tipos nos filtros acima." action={hidden.size > 0 ? <Button variant="secondary" onClick={() => [...hidden].forEach(onToggle)}>Mostrar todos</Button> : undefined} />
       ) : (
         groups.map((g) => (
           <div key={g.year} className="tl-year">

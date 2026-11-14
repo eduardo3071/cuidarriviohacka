@@ -12,6 +12,7 @@ export const SCREENS: { id: string; title: string }[] = [
   { id: "acessos", title: "Privacidade e acessos" },
   { id: "medico", title: "Médico: meus pacientes" },
   { id: "resumo", title: "Médico: resumo clínico" },
+  { id: "estados", title: "Estados: vazio, erro e carregando" },
 ];
 
 /** /celular: cada tela em 375x812 ao lado da versão de computador (1280). */

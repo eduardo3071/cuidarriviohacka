@@ -190,7 +190,7 @@ export function StyleGuide() {
           <div className="feedback-grid">
             <div className="component-block"><h3>Carregamento</h3><Card><Skeleton lines={3} /></Card></div>
             <div className="component-block"><h3>Vazio</h3><Card><EmptyState title="Nenhum resultado por aqui" description="Envie um laudo para começar o seu histórico." action={<Button variant="link">Entendi</Button>} /></Card></div>
-            <div className="component-block"><h3>Erro</h3><Card><ErrorState title="Não foi possível carregar" description="Confira a internet e tente de novo." action={<Button variant="secondary" onClick={() => setNotice("Exemplo de nova tentativa.")}>Tentar de novo</Button>} /></Card></div>
+            <div className="component-block"><h3>Erro</h3><Card><ErrorState title="Não foi possível carregar" description="Confira a internet e tente de novo." onRetry={() => setNotice("Exemplo de nova tentativa.")} /></Card></div>
           </div>
           <div className="component-block"><h3>Aviso temporário</h3><Toast tone="success" title="Tudo certo" message="Este é um exemplo de confirmação. Nada foi guardado." /></div>
         </GuideSection>

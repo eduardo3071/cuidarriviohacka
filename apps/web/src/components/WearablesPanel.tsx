@@ -1,3 +1,4 @@
+import { EmptyState } from "./ui";
 import { fmtNum } from "../lib/format";
 import { dailyMean, groupSamples, METRIC_META } from "../lib/wearables";
 import type { WearableSample } from "../types";
@@ -28,7 +29,7 @@ function Spark({ pts, label }: { pts: number[]; label: string }) {
 
 /** Sinais do relógio: valor mais recente (média do dia) e mini gráfico com a média por dia dos últimos 7 dias. */
 export function WearablesPanel({ samples }: { samples: WearableSample[] }) {
-  if (samples.length === 0) return <p className="muted">Nenhum dado de relógio conectado.</p>;
+  if (samples.length === 0) return <EmptyState title="Nenhum dado de relógio conectado." description="Quando houver dados do relógio, eles aparecem aqui." />;
   const by = groupSamples(samples);
   const end = Math.max(...samples.map((s) => Date.parse(s.t)));
   const recent = (list: WearableSample[]) => list.filter((s) => Date.parse(s.t) > end - 7 * DAY);
